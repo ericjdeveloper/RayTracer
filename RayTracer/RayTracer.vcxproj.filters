@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Meshes">
+      <UniqueIdentifier>{aeb2de6e-c538-4316-bb61-81837b236bdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -29,13 +32,7 @@
     <ClInclude Include="hitable.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="sphere.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="hitable_list.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="material.h">
@@ -53,14 +50,38 @@
     <ClInclude Include="hypertube.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="plane.h">
+    <ClInclude Include="GameEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="cube.h">
+    <ClInclude Include="WindowHandler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="cube2.h">
+    <ClInclude Include="World.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Source Files\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Source Files\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Source Files\Meshes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

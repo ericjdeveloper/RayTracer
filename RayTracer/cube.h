@@ -1,133 +1,53 @@
 #pragma once
+#include <stdio.h>
 #include <math.h>
 
-#include "hitable.h"
+#include "Mesh.h"
 #include "material.h"
+#include "Plane.h"
 
-class cube : public hitable {
+//cube override for the mesh
+class CubeMesh : public Mesh {
 public:
-	cube() {}
-	cube(vec3 cen, float r, material *m) : center(cen), radius(r), mat(m) {};
+	CubeMesh() {}
+	CubeMesh(vec3 cen, float r, material *m) : center(cen), radius(r), mat(m) {
+		
+		//create a new plane for each face
+		faces[0] = new PlaneMesh(center + vec3(radius, 0, 0),  radius, vec3(1, 0,0),   vec3(0, 1, 0), mat);
+		faces[1] = new PlaneMesh(center + vec3(-radius, 0, 0), radius, vec3(-1, 0, 0), vec3(0, 1, 0), mat);
+		faces[2] = new PlaneMesh(center + vec3(0, radius, 0),  radius, vec3(0, 1, 0),  vec3(0, 0, -1), mat);
+		faces[3] = new PlaneMesh(center + vec3(0, -radius, 0), radius, vec3(0, -1, 0), vec3(0, 1, -1), mat);
+		faces[4] = new PlaneMesh(center + vec3(0, 0, radius),  radius, vec3(0, 0, 1),  vec3(0, 1, 0), mat);
+		faces[5] = new PlaneMesh(center + vec3(0, 0, -radius), radius, vec3(0, 0, -1), vec3(0, 1, 0), mat);
 
-	virtual bool hit(const ray& r, float tmin, float tmax, hyperspace *hs, hit_record& rec) const;
+	};
+
+	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 	vec3 center;
 	float radius;
 	material* mat;
+	Mesh *faces[6];
 };
 
-bool bounds(float v, float min, float max)
-{
-	return (v > min && v < max);
-}
-
-bool cube::hit(const ray& r, float t_min, float t_max, hyperspace *hs, hit_record& rec) const {
-
-	vec3* a = nullptr;
-	vec3* b = nullptr;
+//cube override
+bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
 
 
+	hit_record temp_rec;
 
-	vec3 t_minX = r.point_at_parameter(((center.x() - radius) - r.origin().x()) / r.direction().x());
-	vec3 t_maxX = r.point_at_parameter(((center.x() + radius) - r.origin().x()) / r.direction().x());
-
-	vec3 t_minY = r.point_at_parameter(((center.y() - radius) - r.origin().y()) / r.direction().y());
-	vec3 t_maxY = r.point_at_parameter(((center.y() + radius) - r.origin().y()) / r.direction().y());
-
-	vec3 t_minZ = r.point_at_parameter(((center.z() - radius) - r.origin().z()) / r.direction().z());
-	vec3 t_maxZ = r.point_at_parameter(((center.z() + radius) - r.origin().z()) / r.direction().z());
-	
-	if( bounds(t_minX.y(), center.y() - radius, center.y() + radius) &&
-		bounds(t_minX.z(), center.z() - radius, center.z() + radius))
-	{		
-		if (a == nullptr)
-			a = &t_minX;
-		else
-			b = &t_minX;
-	}
-
-	if (bounds(t_maxX.y(), center.y() - radius, center.y() + radius) &&
-		bounds(t_maxX.z(), center.z() - radius, center.z() + radius))
+	//just loop through all the faces
+	//and calculate
+	bool hit_anything = false;
+	double closest_so_far = t_max;
+	for (int i = 0; i < 6; i++)
 	{
-		if (a == nullptr)
-			a = &t_minX;
-		else
-			b = &t_minX;
-	}
-
-
-
-	if (bounds(t_minY.x(), center.x() - radius, center.x() + radius) &&
-		bounds(t_minY.z(), center.z() - radius, center.z() + radius))
-	{
-		if (a == nullptr)
-			a = &t_minY;
-		else
-			b = &t_minY;
-	}
-
-	if (bounds(t_maxY.x(), center.x() - radius, center.x() + radius) &&
-		bounds(t_maxY.z(), center.z() - radius, center.z() + radius))
-	{
-		if (a == nullptr)
-			a = &t_minY;
-		else
-			b = &t_minY;
-	}
-
-	if (bounds(t_minZ.x(), center.x() - radius, center.x() + radius) &&
-		bounds(t_minZ.y(), center.y() - radius, center.y() + radius))
-	{
-		if (a == nullptr)
-			a = &t_minZ;
-		else
-			b = &t_minZ;
-	}
-
-	if (bounds(t_maxZ.x(), center.x() - radius, center.x() + radius) &&
-		bounds(t_maxZ.y(), center.y() - radius, center.y() + radius))
-	{
-		if (a == nullptr)
-			a = &t_minZ;
-		else
-			b = &t_minZ;
-	}
-
-	if (a != nullptr) {
-		if (b != nullptr && (*b - r.origin()).length() < (*a - r.origin()).length())
-		{
-
-			rec.p = *b;
-			rec.t = (*b - r.origin()).length();
-			
-
+		if (faces[i]->hit(r, t_min, closest_so_far, temp_rec)) {
+			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			rec = temp_rec;
 		}
-		else
-		{
-
-			rec.p = *a;
-			rec.t = (*a - r.origin()).length();
-		}
-
-		rec.mat_ptr = mat;
-		vec3 relative = rec.p - center;
-		if (abs(relative.x()) > abs(relative.y()) && abs(relative.x()) > abs(relative.z()))
-		{
-			rec.normal = vec3(relative.x() / abs(relative.x()), 0, 0);
-		}
-		else if (abs(relative.y()) > abs(relative.x()) && abs(relative.y()) > abs(relative.z()))
-		{
-			rec.normal = vec3(0, relative.y() / abs(relative.z()), 0);
-		}
-		else
-		{
-			rec.normal = vec3(0, 0, relative.z() / abs(relative.z()));
-		}
-
-		return true;
 	}
-		
 
-
-	return false;
+	return hit_anything;
 }
 

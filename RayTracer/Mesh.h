@@ -1,12 +1,10 @@
 #pragma once
 
-
+#include "vec3.h"
 #include "ray.h"
-#include "hyperspace.h"
+#include "material.h"
 
-
-class material;
-
+//struct for the collision data of an object
 struct hit_record {
 	float t;
 	vec3 p;
@@ -14,8 +12,8 @@ struct hit_record {
 	material *mat_ptr;
 };
 
-class hitable {
+//Mesh class to handle rendering
+class Mesh {
 public:
 	virtual bool hit(const ray&r, float t_min, float t_max, hit_record& rec) const = 0;
-	float dummy = 10;
 };
