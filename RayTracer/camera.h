@@ -4,12 +4,12 @@
 #include "ray.h"
 
 //Camera handles in-world aspect of the rendering
-class Camera : Entity {
+class Camera : public Entity {
 public:
 	//constructor sets the viewport plane size,
 	//samples count
 	//and max_bounces
-	Camera() {
+	Camera(vec3 pos): Entity(pos) {
 		viewport_plane = vec3(4.0, 2.0, 1.0);
 		samples = 10;
 		max_bounces = 50;

@@ -47,7 +47,7 @@ WindowHandler::WindowHandler(int w, int h, int s)
 
 	//SDL window creation
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("RTR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w * scale, w * scale, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Raytracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w * scale, h * scale, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, 0);
 
 }
@@ -55,6 +55,7 @@ WindowHandler::WindowHandler(int w, int h, int s)
 //renders the pixels from the array to the window
 void WindowHandler::renderWindow()
 {
+	
 	//loop through the width
 	for (int x =0; x < width; x++)
 	{
@@ -67,7 +68,7 @@ void WindowHandler::renderWindow()
 			Uint8 b;
 
 			getPixel(x, y, r, g, b);
-
+			
 			//set the render color
 			SDL_SetRenderDrawColor(renderer, r, g, b, 1);
 
@@ -77,7 +78,7 @@ void WindowHandler::renderWindow()
 				for (int j = 0; j < scale; j++)
 				{
 					//draw the current pixel with the color described
-					SDL_RenderDrawPoint(renderer, (x * scale) + i, (y * scale) + j);
+					SDL_RenderDrawPoint(renderer, (x * scale) + i, ((height -y) * scale) + j);
 				}
 			}
 		}
@@ -91,13 +92,15 @@ void WindowHandler::renderWindow()
 void WindowHandler::setPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b) {
 
 	//get the index value for the array
-	int index = (x * width) + y;
+	int index = ((y * width) + x) * 3;
 
 	//set the respective values
+
+	
 	pixels[index] = r;
 	pixels[index + 1] = g;
 	pixels[index + 2] = b;
-
+	
 }
 
 
@@ -105,7 +108,7 @@ void WindowHandler::setPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b) {
 void WindowHandler::getPixel(int x, int y, Uint8& r, Uint8& g, Uint8& b)
 {
 	//get the index value for the pixel
-	int index = (x * width) + y;
+	int index = ((y * width) + x) * 3;
 
 	//store the values into r,g,b
 	r = pixels[index];

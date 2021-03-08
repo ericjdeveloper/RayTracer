@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec3.h"
+#include "Transform.h"
 #include "ray.h"
 #include "material.h"
 
@@ -13,7 +14,11 @@ struct hit_record {
 };
 
 //Mesh class to handle rendering
+
 class Mesh {
 public:
 	virtual bool hit(const ray&r, float t_min, float t_max, hit_record& rec) const = 0;
+	virtual void setTransform(Transform * tfm) { transform = tfm; }
+protected:
+	Transform *transform;
 };

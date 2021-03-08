@@ -29,23 +29,26 @@ bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) con
 
 	if (denom > 1e-6) {
 
-		vec3 p0l0 = r.origin() -center;
+		vec3 globalCenter = transform->position + center;
+
+		vec3 p0l0 = r.origin() - globalCenter;
 		float temp = dot(p0l0, facing) / denom;
 
 		
 		if (temp > t_min && temp < t_max)
 		{
 			vec3 p = r.point_at_parameter(temp);
-			vec3 v = p - center;
+			vec3 v = p - globalCenter;
 			vec3 right = cross(facing, up);
 						
 			//if the distance from the interesection and the point is within the radius, 
 			//count as a hit
-			if (dot(right * radius, v) <= radius 
-				&& dot(-right * radius, v) <= radius
-				&& dot(up * radius, v) <= radius
-				&& dot(-up * radius, v) <= radius)
+			if (dot(right * radius, v) <= (radius * radius)
+				&& dot(-right * radius, v) <= (radius * radius)
+				&& dot(up * radius, v) <= (radius * radius)
+				&& dot(-up * radius, v) <= (radius * radius))
 			{
+
 				rec.mat_ptr = mat;
 				rec.normal = facing;
 				rec.t = temp;

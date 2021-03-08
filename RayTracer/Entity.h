@@ -7,6 +7,7 @@
 //(including cameras and lights)
 class Entity {
 public:
+	Entity(vec3 pos) { transform.position = pos; }
 	//All entities exist at a position in space,
 	//so they have a transform
 	Transform transform;

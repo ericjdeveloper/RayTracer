@@ -14,12 +14,28 @@ public:
 		
 		//create a new plane for each face
 		faces[0] = new PlaneMesh(center + vec3(radius, 0, 0),  radius, vec3(1, 0,0),   vec3(0, 1, 0), mat);
+
 		faces[1] = new PlaneMesh(center + vec3(-radius, 0, 0), radius, vec3(-1, 0, 0), vec3(0, 1, 0), mat);
+
 		faces[2] = new PlaneMesh(center + vec3(0, radius, 0),  radius, vec3(0, 1, 0),  vec3(0, 0, -1), mat);
+
 		faces[3] = new PlaneMesh(center + vec3(0, -radius, 0), radius, vec3(0, -1, 0), vec3(0, 1, -1), mat);
+
 		faces[4] = new PlaneMesh(center + vec3(0, 0, radius),  radius, vec3(0, 0, 1),  vec3(0, 1, 0), mat);
+
 		faces[5] = new PlaneMesh(center + vec3(0, 0, -radius), radius, vec3(0, 0, -1), vec3(0, 1, 0), mat);
 
+
+	};
+	void setTransform(Transform *tfm) {
+		transform = tfm;
+
+		faces[0]->setTransform(transform);
+		faces[1]->setTransform(transform);
+		faces[2]->setTransform(transform);
+		faces[3]->setTransform(transform);
+		faces[4]->setTransform(transform);
+		faces[5]->setTransform(transform);
 	};
 
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
@@ -32,7 +48,6 @@ public:
 //cube override
 bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
 
-
 	hit_record temp_rec;
 
 	//just loop through all the faces
@@ -41,6 +56,7 @@ bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
 	double closest_so_far = t_max;
 	for (int i = 0; i < 6; i++)
 	{
+		
 		if (faces[i]->hit(r, t_min, closest_so_far, temp_rec)) {
 			hit_anything = true;
 			closest_so_far = temp_rec.t;

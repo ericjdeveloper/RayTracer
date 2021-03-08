@@ -2,7 +2,7 @@
 
 #include "WindowHandler.h"
 #include "Item.h"
-#include "camera.h"
+#include "Camera.h"
 
 
 
@@ -18,15 +18,15 @@ public:
 	//adds an object to the list
 	void addObject(Item* item);
 
+	//the world camera
+	Camera *cam;
+
 private:
 	//the list of world objects
 	Item **world_objects;
 
 	//the number of items in world_objects
 	int item_count;
-
-	//the world camera
-	Camera *cam;
 
 	//function for obtaining the color of the given ray
 	vec3 color(const ray&, int depth);
@@ -38,7 +38,7 @@ private:
 World::World()
 {
 	//initialize camera object
-	cam = new Camera();
+	cam = new Camera(vec3 (-3, 1.5, -3));
 }
 
 //function for getting a random point within a unit sphere
@@ -66,12 +66,30 @@ vec3 World::color(const ray& r, int depth) {
 	//record data for a hit point on the ray
 	hit_record rec;
 
+	if (item_count == 0)
+	{
+		
+		vec3 unit_direction = unit_vector(r.direction());
+		float t = 0.5*(unit_direction.y() + 1.0);
+		return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+		
+	}
+
+	
+	vec3 unit_direction = unit_vector(r.direction());
+	float t = 0.5*(unit_direction.y() + 1.0);
+	vec3 col = (1.0 - t)*vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+
+	
+	float closest = FLT_MAX;
+
+
+
 	//loop through all the items in the world
 	for (int i = 0; i < item_count; i++) {
 
 		//if the item registers a hit
-		
-		if (world_objects[i]->mesh->hit(r, 0.001, FLT_MAX, rec)) {
+		if (world_objects[i]->mesh->hit(r, 0.001, closest, rec)) {
 			//create a new reflection ray
 			ray scattered;
 			vec3 attenuation;
@@ -80,21 +98,20 @@ vec3 World::color(const ray& r, int depth) {
 			//and the scatter results in another hit
 			if (depth < cam->max_bounces && rec.mat_ptr->scatter(r, rec.p, rec.normal, attenuation, scattered)) {
 				//return the color of the scattered ray
-				return attenuation * color(scattered, depth + 1);
+				col = attenuation * color(scattered, depth + 1);
 			}
-			//otherwise return black
 			else {
-				return vec3(0, 0, 0);
+				col = vec3(0, 0, 0);
 			}
 		}
-		//if no hit, return a nice background gradient
-		else {
-			vec3 unit_direction = unit_vector(r.direction());
-			float t = 0.5*(unit_direction.y() + 1.0);
-			return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
-
-		}
+		
 	}
+
+	return col;
+
+	
+	
+	
 }
 
 //determines the value for each pixel and sets it to output
@@ -122,8 +139,9 @@ void World::render(WindowHandler* output)
 
 
 				//determine the point the ray should go through
-				float u = float(i + randx) / float(width);
-				float v = float(j + randy) / float(height);
+				float u = float(j + randx) / float(width);
+				float v = float(i + randy) / float(height);
+
 
 				//gets a ray from the camera starting
 				//at the cameras position and going through point u,v
@@ -131,6 +149,7 @@ void World::render(WindowHandler* output)
 
 				//get the color value for the given ray
 				col += color(r, 0);
+				
 
 			}
 			//divide the color by the number of samples
@@ -145,7 +164,8 @@ void World::render(WindowHandler* output)
 			Uint8 ib = Uint8(255.99 * col[2]);
 
 			//set the given pixel value of the output
-			output->setPixel(i, j, ir, ig, ib);
+			
+			output->setPixel(j, i, ir, ig, ib);
 
 		}
 

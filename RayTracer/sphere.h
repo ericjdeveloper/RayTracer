@@ -26,7 +26,9 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 	//but the quick explanation is that the intersection of a line can be determined by
 	//the quadratic equation. 
 	
-	vec3 oc = r.origin() - center;
+	vec3 globalCenter = transform->position + center;
+
+	vec3 oc = r.origin() - globalCenter;
 	float a = dot(r.direction(), r.direction());
 	float b = dot(oc, r.direction());
 	float c = dot(oc, oc) - radius * radius;
@@ -41,7 +43,7 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - center) / radius;
+			rec.normal = (rec.p - globalCenter) / radius;
 			rec.mat_ptr = mat;
 			return true;
 		}
@@ -51,7 +53,7 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - center) / radius;
+			rec.normal = (rec.p - globalCenter) / radius;
 			rec.mat_ptr = mat;
 			return true;
 		}
