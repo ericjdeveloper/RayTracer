@@ -1,9 +1,17 @@
 # RayTracer
 This program is intended to be a realtime raytracer. Currently it's incredibly simple, and so runs quite slowly. However, it is slowly growing.
-Currently, this renderer supports moving the camera around, creating various planes, cubes, and spheres, and support for lambertian and 
-metal surfaces.
+Currently, this renderer supports 
+  - variable camera position
+  - various shapes 
+    - spheres
+    - cubes
+    - planes
+  - multiple materials
+    -metal
+    -lambertian
+    
 
-### future updates:
+### Future Updates:
 The intention for this raytracer is to try and create an engine that supports liminal space. This is not an easy task, and it might be a long while before that is
 completely implemented. However, all design choices made now will be made with this future behaviour in mind.
 
