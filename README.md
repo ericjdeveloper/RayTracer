@@ -9,7 +9,7 @@ completely implemented. However, all design choices made now will be made with t
 
 ## Installation:
 Installing this program is fairly simple. The only dependencies are the SDL2 library, which can be found [here](https://www.libsdl.org/download-2.0.php).
-There are tons of tutorials online on how to install SDl2 if youre unfamiliar with linking libraries as I was.
+There are tons of tutorials online on how to install SDL2 if youre unfamiliar with linking libraries as I was.
 
 Once that's completed, you should be able to hit run, and thats it!
 
