@@ -140,10 +140,6 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Plane.h" />
-    <ClInclude Include="hitable.h" />
-    <ClInclude Include="hitable_list.h" />
-    <ClInclude Include="hyperspace.h" />
-    <ClInclude Include="hypertube.h" />
     <ClInclude Include="lambertian.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="metal.h" />
