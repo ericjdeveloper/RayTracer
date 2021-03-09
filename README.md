@@ -7,8 +7,8 @@ Currently, this renderer supports
     - cubes
     - planes
   - multiple materials
-    -metal
-    -lambertian
+    - metal
+    - lambertian
     
 
 ### Future Updates:
