@@ -29,6 +29,6 @@ This raytracer was built starting with code/concepts from the following articles
 A really good link for explaining the workings of a ray tracer and how to write up a simple one in c++. It's not the cleanest code, but it works.
 This renderer expands on those ideas.
 
-[A Minimal Ray-Tracer](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/parametric-and-implicit-surfaces): Really handy for getting a feel for the math behind ray-tracers. Mostyly pseudocode, but still incredibly useful
+[A Minimal Ray-Tracer](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/parametric-and-implicit-surfaces): Really handy for getting a feel for the math behind ray-tracers. Mostly pseudocode, but still incredibly useful
 
 
