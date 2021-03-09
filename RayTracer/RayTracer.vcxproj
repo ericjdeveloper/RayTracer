@@ -133,10 +133,13 @@
     <ClCompile Include="vec3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="cube.h" />
-    <ClInclude Include="cube2.h" />
-    <ClInclude Include="plane.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="hitable.h" />
     <ClInclude Include="hitable_list.h" />
     <ClInclude Include="hyperspace.h" />
@@ -145,7 +148,10 @@
     <ClInclude Include="material.h" />
     <ClInclude Include="metal.h" />
     <ClInclude Include="ray.h" />
-    <ClInclude Include="sphere.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="WindowHandler.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
