@@ -38,8 +38,8 @@ GameEngine::GameEngine()
 {
 	//set the window width, height, and scaling
 	//set the sample size
-	int nx = 200;
-	int ny = 100;
+	int nx = 100;
+	int ny = 50;
 	int scale = 5;
 	int ns = 50;
 	
