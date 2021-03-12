@@ -57,22 +57,50 @@ void GameEngine::startGame()
 	//add a ground plane and a metal sphere
 	//just to test
 	world->addObject(new Item(vec3(0, 0, 0), new PlaneMesh(vec3(0, 0, 0), 10, vec3(0, 1, 0), vec3(0, 0, -1), new lambertian(vec3(0.6, 0.8, 0.0)))));
-	world->addObject(new Item(vec3(2, 1, 0), new CubeMesh(vec3(0, 0, 0), 1, new lambertian(vec3(0.1, 0.1, 0.8)))));
-	world->addObject(new Item(vec3(-2, 1, 0), new SphereMesh(vec3(0, 0, 0), 1, new metal(vec3(0.5, 0.5, 0.5), 1))));
+	
+	Item* cube = new Item(vec3(0, 1, 0), new CubeMesh(vec3(0, 0, 0), 1, new lambertian(vec3(0.1, 0.1, 0.8))));
+	cube->transform.scale = 0.5;
+	world->addObject(cube);
 
-	//execute the game loop
-	while (true)
-	{
-		gameLoop();
-	}
+	
+	Item* sphere = new Item(vec3(-2, 1, 0), new SphereMesh(vec3(0, 0, 0), 1, new metal(vec3(0.5, 0.5, 0.5), 1)));
+	sphere->transform.scale = 1;
+	world->addObject(sphere);
+	gameLoop();
+
 }
 
 //handles all functions executed for each loop of the game
 void GameEngine::gameLoop()
 {
-	world->cam->transform.position += vec3(1, 0, 0);
-	//calculate the image of the current frame
-	//and display it on the window
-	world->render(window);
-	window->renderWindow();
+	
+	int cameraAngle = 0;
+	float c_dist = -10;
+
+	bool exitFlag = false;
+	while (!exitFlag) {
+		SDL_Event e;
+
+		while (SDL_PollEvent(&e))
+		{
+			switch (e.type)
+			{
+			case SDL_QUIT: exitFlag = true; break;
+
+			case SDL_KEYDOWN:
+				cameraAngle = (cameraAngle + 10) % 360;
+				break;
+			}
+		}
+
+
+		world->cam->transform.position = vec3(sin(cameraAngle * DEG2RAD) * c_dist, 1.5, cos(cameraAngle * DEG2RAD) * c_dist);
+		world->cam->transform.rotation = vec3(0, cameraAngle, 0);
+
+
+		//calculate the image of the current frame
+		//and display it on the window
+		world->render(window);
+		window->renderWindow();
+	}
 }

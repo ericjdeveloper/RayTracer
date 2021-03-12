@@ -14,15 +14,10 @@ public:
 		
 		//create a new plane for each face
 		faces[0] = new PlaneMesh(center + vec3(radius, 0, 0),  radius, vec3(1, 0,0),   vec3(0, 1, 0), mat);
-
 		faces[1] = new PlaneMesh(center + vec3(-radius, 0, 0), radius, vec3(-1, 0, 0), vec3(0, 1, 0), mat);
-
 		faces[2] = new PlaneMesh(center + vec3(0, radius, 0),  radius, vec3(0, 1, 0),  vec3(0, 0, -1), mat);
-
 		faces[3] = new PlaneMesh(center + vec3(0, -radius, 0), radius, vec3(0, -1, 0), vec3(0, 1, -1), mat);
-
 		faces[4] = new PlaneMesh(center + vec3(0, 0, radius),  radius, vec3(0, 0, 1),  vec3(0, 1, 0), mat);
-
 		faces[5] = new PlaneMesh(center + vec3(0, 0, -radius), radius, vec3(0, 0, -1), vec3(0, 1, 0), mat);
 
 

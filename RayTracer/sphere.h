@@ -13,7 +13,7 @@ public:
 	//override for the hit call
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
-	//data for center, radius, and mass;
+	//data for center, radius, and material;
 	vec3 center;
 	float radius;
 	material* mat;
@@ -26,12 +26,13 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 	//but the quick explanation is that the intersection of a line can be determined by
 	//the quadratic equation. 
 	
-	vec3 globalCenter = transform->position + center;
+	vec3 globalCenter = transform->applyTransform(center, true);
+	float scaledRadius = radius * transform->scale;
 
 	vec3 oc = r.origin() - globalCenter;
 	float a = dot(r.direction(), r.direction());
 	float b = dot(oc, r.direction());
-	float c = dot(oc, oc) - radius * radius;
+	float c = dot(oc, oc) - (scaledRadius * scaledRadius);
 	float discriminant = b * b -  a * c;
 
 	//If the descriminant has 2 roots its real, otherwise the 
@@ -43,7 +44,7 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - globalCenter) / radius;
+			rec.normal = (rec.p - globalCenter) / scaledRadius;
 			rec.mat_ptr = mat;
 			return true;
 		}
@@ -53,7 +54,7 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 		if (temp < t_max && temp > t_min) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - globalCenter) / radius;
+			rec.normal = (rec.p - globalCenter) / scaledRadius;
 			rec.mat_ptr = mat;
 			return true;
 		}

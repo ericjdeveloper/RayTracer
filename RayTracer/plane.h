@@ -25,32 +25,41 @@ public:
 bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
 	
 	//Math is based off of the plane generation from "A minimal ray-tracer"
-	float denom = dot(-r.direction(), facing);
+	vec3 tfmFacing = transform->applyTransform(facing);
+	float tfmRadius = radius * transform->scale;
+
+	float denom = dot(-r.direction(), tfmFacing);
 
 	if (denom > 1e-6) {
 
-		vec3 globalCenter = transform->position + center;
+		vec3 globalCenter = transform->applyTransform(center, true);
 
 		vec3 p0l0 = r.origin() - globalCenter;
-		float temp = dot(p0l0, facing) / denom;
+		float temp = dot(p0l0, tfmFacing) / denom;
 
 		
 		if (temp > t_min && temp < t_max)
 		{
+			vec3 tfmUp = transform->applyTransform(up);
+
+
 			vec3 p = r.point_at_parameter(temp);
 			vec3 v = p - globalCenter;
-			vec3 right = cross(facing, up);
-						
+			vec3 right = unit_vector(cross(tfmFacing, tfmUp)) * transform->scale;
+
 			//if the distance from the interesection and the point is within the radius, 
 			//count as a hit
-			if (dot(right * radius, v) <= (radius * radius)
-				&& dot(-right * radius, v) <= (radius * radius)
-				&& dot(up * radius, v) <= (radius * radius)
-				&& dot(-up * radius, v) <= (radius * radius))
+			float r_sqd = tfmRadius * tfmRadius;
+
+
+			if (dot(right * radius, v) <= r_sqd
+				&& dot(-right * radius, v) <= r_sqd
+				&& dot(tfmUp * radius, v) <= r_sqd
+				&& dot(-tfmUp * radius, v) <= r_sqd)
 			{
 
 				rec.mat_ptr = mat;
-				rec.normal = facing;
+				rec.normal = tfmFacing;
 				rec.t = temp;
 				rec.p = p;
 

@@ -38,7 +38,7 @@ private:
 World::World()
 {
 	//initialize camera object
-	cam = new Camera(vec3 (-3, 1.5, -3));
+	cam = new Camera(vec3 (0, 1.5, -5));
 }
 
 //function for getting a random point within a unit sphere
@@ -103,6 +103,9 @@ vec3 World::color(const ray& r, int depth) {
 			else {
 				col = vec3(0, 0, 0);
 			}
+
+
+			closest = rec.t;
 		}
 		
 	}
