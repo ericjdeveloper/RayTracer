@@ -1,8 +1,8 @@
 # RayTracer
 This program is intended to be a realtime raytracer. Currently it's incredibly simple, and so runs quite slowly. However, it is slowly growing.
 Currently, this renderer supports 
-  - variable camera position
-  - various shapes 
+  - variable camera position/rotation
+  - various shapes with unique sizes/rotations/positions
     - spheres
     - cubes
     - planes
@@ -20,6 +20,7 @@ Installing this program is fairly simple. The only dependencies are the SDL2 lib
 I used visual studio, but other programs will require different methods for including this library.
 
 Once that's completed, you should be able to hit run, and thats it!
+Press any key to rotate the camera to the right. You'll have to hold it for a while for it to register.
 
 
 ## Credits:
