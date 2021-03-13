@@ -1,9 +1,14 @@
 #pragma once
 
+#include <thread>
+
+
 #include "WindowHandler.h"
 #include "Item.h"
 #include "Camera.h"
 
+using namespace std;
+#define THREAD_CHUNK 0.1
 
 
 //object to handle the Entities in the world
@@ -33,6 +38,10 @@ private:
 
 	//function for getting a random point within a unit sphere
 	vec3 random_in_unit_sphere();
+
+
+
+	void renderSection(WindowHandler* output, float x, float y, float w, float h);
 };
 
 World::World()
@@ -120,15 +129,38 @@ vec3 World::color(const ray& r, int depth) {
 //determines the value for each pixel and sets it to output
 void World::render(WindowHandler* output)
 {
+	//the number of threads to use;
+	const int thread_axis_count = 1 / THREAD_CHUNK;
+
+	thread threads[thread_axis_count * thread_axis_count];
+
+
+	for (int i = 0; i < thread_axis_count; i++)
+	{
+		for (int j = 0; j < thread_axis_count; j++)
+		{
+			threads[(i * thread_axis_count) + j] = thread(&World::renderSection, this, output, i * THREAD_CHUNK, j * THREAD_CHUNK, THREAD_CHUNK, THREAD_CHUNK);
+		}
+	}
+	
+	
+	for (int i = 0; i < thread_axis_count * thread_axis_count; i++)
+	{
+		threads[i].join();
+	}
+}
+
+void World::renderSection(WindowHandler* output, float x, float y, float w, float h)
+{
 	//get the number of pixels to output
 	int width = output->getWidth();
 	int height = output->getHeight();
 
 	//loop through the width
-	for (int j = 0; j < width; j++)
+	for (int j = x * width; j < (x + w) * width; j++)
 	{
 		//loop through the height
-		for (int i = 0; i < height; i++)
+		for (int i = y * height; i < (y + h) * height; i++)
 		{
 			//set a base color
 			vec3 col(0, 0, 0);
@@ -139,12 +171,11 @@ void World::render(WindowHandler* output)
 				//get a random x and y value within the pixel
 				float randx = ((double)rand() / (RAND_MAX + 1));
 				float randy = ((double)rand() / (RAND_MAX + 1));
-
+				
 
 				//determine the point the ray should go through
 				float u = float(j + randx) / float(width);
 				float v = float(i + randy) / float(height);
-
 
 				//gets a ray from the camera starting
 				//at the cameras position and going through point u,v

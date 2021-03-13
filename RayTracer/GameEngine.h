@@ -1,5 +1,8 @@
 #pragma once
 
+#include <chrono>
+using namespace std::chrono;
+
 #include "WindowHandler.h";
 #include "World.h"
 
@@ -40,7 +43,7 @@ GameEngine::GameEngine()
 	//set the sample size
 	int nx = 200;
 	int ny = 100;
-	int scale = 5;
+	int scale = 3;
 	int ns = 50;
 	
 	//create a new window
@@ -78,7 +81,11 @@ void GameEngine::gameLoop()
 	float c_dist = -10;
 
 	bool exitFlag = false;
+
+	
 	while (!exitFlag) {
+		auto start = high_resolution_clock::now();
+
 		SDL_Event e;
 
 		while (SDL_PollEvent(&e))
@@ -102,5 +109,11 @@ void GameEngine::gameLoop()
 		//and display it on the window
 		world->render(window);
 		window->renderWindow();
+
+		auto end = high_resolution_clock::now();
+
+		duration<double> elapsed = end - start;
+
+		cout << 1 / elapsed.count() << "\n";
 	}
 }
