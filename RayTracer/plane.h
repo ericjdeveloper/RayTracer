@@ -2,23 +2,21 @@
 #include <math.h>
 
 #include "Mesh.h"
-#include "material.h"
 
 //Plane mesh handler
 class PlaneMesh : public Mesh {
 public:
 	//constructor
-	PlaneMesh(vec3 cen, float r, vec3 f, vec3 u, material *m) : center(cen), radius(r), facing(f), up(u), mat(m) {};
+	PlaneMesh(vec3 f=vec3(0,0,-1), float w=1, vec3 u = vec3(0,1,0), vec3 cen = vec3(0, 0, 0)) : center(cen), width(w), facing(f), up(u){};
 
 	//override
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
 	
 	vec3 center;
-	float radius;
+	float width;
 	vec3 facing;
 	vec3 up;
-	material* mat;
 };
 
 //hit override
@@ -26,11 +24,10 @@ bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) con
 	
 	//Math is based off of the plane generation from "A minimal ray-tracer"
 	vec3 tfmFacing = transform->applyTransform(facing);
-	float tfmRadius = radius * transform->scale;
-
+	
 	float denom = dot(-r.direction(), tfmFacing);
 
-	if (denom > 1e-6) {
+	if (abs(denom) > 1e-6) {
 
 		vec3 globalCenter = transform->applyTransform(center, true);
 
@@ -45,26 +42,34 @@ bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) con
 
 			vec3 p = r.point_at_parameter(temp);
 			vec3 v = p - globalCenter;
-			vec3 right = unit_vector(cross(tfmFacing, tfmUp)) * transform->scale;
+
+			vec3 right = cross(facing, up);
+			vec3 tfmRight = transform->applyTransform(right);
+
+			
+			float scaled_width = (width / 2) * abs(dot(right, transform->scale));
+			float scaled_height = (width /2) * abs(dot(up, transform->scale));
+
 
 			//if the distance from the interesection and the point is within the radius, 
 			//count as a hit
-			float r_sqd = tfmRadius * tfmRadius;
 
+			tfmRight.make_unit_vector();
+			tfmUp.make_unit_vector();
 
-			if (dot(right * radius, v) <= r_sqd
-				&& dot(-right * radius, v) <= r_sqd
-				&& dot(tfmUp * radius, v) <= r_sqd
-				&& dot(-tfmUp * radius, v) <= r_sqd)
+			if (dot(tfmRight, v) <= scaled_width
+				&& dot(-tfmRight, v) <= scaled_width
+				&& dot(tfmUp, v) <= scaled_height
+				&& dot(-tfmUp, v) <= scaled_height)
 			{
-
-				rec.mat_ptr = mat;
-				rec.normal = tfmFacing;
+				
+				rec.normal = unit_vector(tfmFacing);
 				rec.t = temp;
 				rec.p = p;
 
 				return true;
 			}
+			
 		}
 
 	}

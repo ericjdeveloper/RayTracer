@@ -10,7 +10,7 @@ struct hit_record {
 	float t;
 	vec3 p;
 	vec3 normal;
-	material *mat_ptr;
+	Material *mat_ptr;
 };
 
 //Mesh class to handle rendering

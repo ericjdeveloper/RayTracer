@@ -1,7 +1,7 @@
 #pragma once
 #include "ray.h"
 
-class material {
+class Material {
 public:
 	virtual bool scatter(const ray& r_in, vec3& p, vec3& normal, vec3& attenuation, ray& scattered) const = 0;
 

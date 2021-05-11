@@ -1,11 +1,11 @@
 #pragma once
 
-#include "material.h"
+#include "Material.h"
 
 
-class lambertian : public material {
+class Lambertian : public Material {
 public:
-	lambertian(const vec3& a) : albedo(a) {}
+	Lambertian(const vec3& a) : albedo(a) {}
 	virtual bool scatter(const ray& r_in, vec3& p, vec3& normal, vec3& attenuation, ray& scattered) const {
 
 		vec3 target = p + normal + random_in_unit_sphere();

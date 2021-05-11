@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Renderer.h" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="vec3.h" />
   </ItemGroup>
@@ -138,15 +139,19 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="LiminalVolume.h" />
+    <ClInclude Include="LiminalWorld.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ScreenData.h" />
     <ClInclude Include="Plane.h" />
-    <ClInclude Include="lambertian.h" />
-    <ClInclude Include="material.h" />
-    <ClInclude Include="metal.h" />
+    <ClInclude Include="Lambertian.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Metal.h" />
+    <ClInclude Include="PPMRenderer.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="WindowHandler.h" />
+    <ClInclude Include="SDLWindowRenderer.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

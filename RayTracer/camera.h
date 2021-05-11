@@ -11,8 +11,8 @@ public:
 	//and max_bounces
 	Camera(vec3 pos): Entity(pos) {
 		viewport_plane = vec3(4.0, 2.0, 2.0);
-		samples = 10;
-		max_bounces = 50;
+		samples = 50;
+		max_bounces = 10;
 	}
 	
 	//returns the ray at a given point on the viewport plane

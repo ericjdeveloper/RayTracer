@@ -3,22 +3,20 @@
 #include <math.h>
 
 #include "Mesh.h"
-#include "material.h"
 #include "Plane.h"
 
 //cube override for the mesh
 class CubeMesh : public Mesh {
 public:
-	CubeMesh() {}
-	CubeMesh(vec3 cen, float r, material *m) : center(cen), radius(r), mat(m) {
+	CubeMesh(float s=1, vec3 cen = vec3(0,0,0)) : center(cen), size(s){
 		
 		//create a new plane for each face
-		faces[0] = new PlaneMesh(center + vec3(radius, 0, 0),  radius, vec3(1, 0,0),   vec3(0, 1, 0), mat);
-		faces[1] = new PlaneMesh(center + vec3(-radius, 0, 0), radius, vec3(-1, 0, 0), vec3(0, 1, 0), mat);
-		faces[2] = new PlaneMesh(center + vec3(0, radius, 0),  radius, vec3(0, 1, 0),  vec3(0, 0, -1), mat);
-		faces[3] = new PlaneMesh(center + vec3(0, -radius, 0), radius, vec3(0, -1, 0), vec3(0, 1, -1), mat);
-		faces[4] = new PlaneMesh(center + vec3(0, 0, radius),  radius, vec3(0, 0, 1),  vec3(0, 1, 0), mat);
-		faces[5] = new PlaneMesh(center + vec3(0, 0, -radius), radius, vec3(0, 0, -1), vec3(0, 1, 0), mat);
+		faces[0] = new PlaneMesh(vec3(1, 0, 0),  size, vec3(0, 1, 0),  center + vec3(size / 2, 0, 0));
+		faces[1] = new PlaneMesh(vec3(-1, 0, 0), size, vec3(0, 1, 0),  center + vec3(-size / 2, 0, 0));
+		faces[2] = new PlaneMesh(vec3(0, 1, 0),  size, vec3(0, 0, -1), center + vec3(0, size / 2, 0));
+		faces[3] = new PlaneMesh(vec3(0, -1, 0), size, vec3(0, 1, -1), center + vec3(0, -size / 2, 0));
+		faces[4] = new PlaneMesh(vec3(0, 0, 1),  size, vec3(0, 1, 0),  center + vec3(0, 0, size / 2));
+		faces[5] = new PlaneMesh(vec3(0, 0, -1), size, vec3(0, 1, 0),  center + vec3(0, 0, -size / 2));
 
 
 	};
@@ -35,8 +33,7 @@ public:
 
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 	vec3 center;
-	float radius;
-	material* mat;
+	float size;
 	Mesh *faces[6];
 };
 
@@ -44,7 +41,6 @@ public:
 bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
 
 	hit_record temp_rec;
-
 	//just loop through all the faces
 	//and calculate
 	bool hit_anything = false;

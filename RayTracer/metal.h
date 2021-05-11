@@ -1,6 +1,6 @@
 #pragma once
 
-#include "material.h"
+#include "Material.h"
 
 vec3 reflect(const vec3& v, const vec3& n)
 {
@@ -8,9 +8,9 @@ vec3 reflect(const vec3& v, const vec3& n)
 }
 
 
-class metal : public material {
+class Metal : public Material {
 public:
-	metal(const vec3& a, float f) : albedo(a) { if (f < 1) fuzz = f; else fuzz = 1;}
+	Metal(const vec3& a, float f) : albedo(a) { if (f < 1) fuzz = f; else fuzz = 1;}
 
 	virtual bool scatter(const ray& r_in, vec3& p, vec3& normal, vec3& attenuation, ray& scattered) const {
 		vec3 reflected = reflect(unit_vector(r_in.direction()), normal);

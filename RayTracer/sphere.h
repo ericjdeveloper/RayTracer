@@ -1,22 +1,20 @@
 #pragma once
 
 #include "Mesh.h"
-#include "material.h"
 
 
 //Sphere mesh handler
 class SphereMesh : public Mesh {
 public:
 	//initializer that sets center, radius, and material
-	SphereMesh(vec3 cen, float r, material *m) : center(cen), radius(r), mat(m) {};
+	SphereMesh(float d=1, vec3 cen = vec3(0,0,0)) : center(cen), diameter(d) {};
 
 	//override for the hit call
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
 	//data for center, radius, and material;
 	vec3 center;
-	float radius;
-	material* mat;
+	float diameter;
 };
 
 //override of hit function for the sphere
@@ -27,7 +25,8 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 	//the quadratic equation. 
 	
 	vec3 globalCenter = transform->applyTransform(center, true);
-	float scaledRadius = radius * transform->scale;
+	float radius = diameter / 2;
+	float scaledRadius = radius;/// transform->scale.length();
 
 	vec3 oc = r.origin() - globalCenter;
 	float a = dot(r.direction(), r.direction());
@@ -45,7 +44,6 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - globalCenter) / scaledRadius;
-			rec.mat_ptr = mat;
 			return true;
 		}
 
@@ -55,7 +53,6 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - globalCenter) / scaledRadius;
-			rec.mat_ptr = mat;
 			return true;
 		}
 	}
