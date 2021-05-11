@@ -5,17 +5,18 @@
 
 #include "SDLWindowRenderer.h"
 #include "PPMRenderer.h"
+#include "TerminalRenderer.h"
 #include "GameEngine.h"
 
 //main function
 //creates and launges the game engine
 int main(int argc, char* argv[])
 {
-	int width = 200;
-	int height = 100;
+	int width = 100;
+	int height = 50;
 	int scale = 1;
 
-	Renderer* rend = new SDLWindowRenderer(width * scale, height * scale);
+	Renderer* rend = new TerminalRenderer(width * scale, height * scale);
 
 	//initialize the game engine
 	GameEngine *ge = new GameEngine(rend, 1, width, height);

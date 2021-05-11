@@ -150,6 +150,7 @@
     <ClInclude Include="PPMRenderer.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="TerminalRenderer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="SDLWindowRenderer.h" />
     <ClInclude Include="World.h" />

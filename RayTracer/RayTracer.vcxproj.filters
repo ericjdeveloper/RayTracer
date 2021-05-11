@@ -89,5 +89,8 @@
     <ClInclude Include="ScreenData.h">
       <Filter>Source Files\WindowRenderers</Filter>
     </ClInclude>
+    <ClInclude Include="TerminalRenderer.h">
+      <Filter>Source Files\WindowRenderers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
