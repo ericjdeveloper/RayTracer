@@ -3,9 +3,10 @@
 #include <thread>
 
 
-#include "WindowHandler.h"
+#include "ScreenData.h"
 #include "Item.h"
 #include "Camera.h"
+#include "LiminalWorld.h"
 
 using namespace std;
 #define THREAD_CHUNK 0.1
@@ -19,12 +20,14 @@ public:
 	World();
 
 	//calculates the pixel values for all of output
-	void render(WindowHandler* output);
+	void render(ScreenData* output);
 	//adds an object to the list
 	void addObject(Item* item);
 
 	//the world camera
 	Camera *cam;
+
+	LiminalWorld* lw;
 
 private:
 	//the list of world objects
@@ -41,13 +44,15 @@ private:
 
 
 
-	void renderSection(WindowHandler* output, float x, float y, float w, float h);
+	void renderSection(ScreenData* output, float x, float y, float w, float h);
 };
 
 World::World()
 {
 	//initialize camera object
-	cam = new Camera(vec3 (0, 1.5, -5));
+	cam = new Camera(vec3 (0, 1, -3));
+
+	lw = new LiminalWorld();
 }
 
 //function for getting a random point within a unit sphere
@@ -75,36 +80,34 @@ vec3 World::color(const ray& r, int depth) {
 	//record data for a hit point on the ray
 	hit_record rec;
 
-	if (item_count == 0)
-	{
-		
-		vec3 unit_direction = unit_vector(r.direction());
-		float t = 0.5*(unit_direction.y() + 1.0);
-		return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
-		
-	}
-
 	
 	vec3 unit_direction = unit_vector(r.direction());
 	float t = 0.5*(unit_direction.y() + 1.0);
-	vec3 col = (1.0 - t)*vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	vec3 col = (1.0f - t)*vec3(1, 1, 1) + t * vec3(0.5f, 0.7f, 1.0f);
 
-	
+
 	float closest = FLT_MAX;
 
+	vec3 next = vec3(0,0,0);
+
+	bool skewed = lw->volumeHit(r, closest, next);
+	bool hitFlag = false;
 
 
 	//loop through all the items in the world
 	for (int i = 0; i < item_count; i++) {
 
 		//if the item registers a hit
-		if (world_objects[i]->mesh->hit(r, 0.001, closest, rec)) {
+		if (world_objects[i]->hit(r, 0.001, closest, rec)) {
+			hitFlag = true;
+
 			//create a new reflection ray
 			ray scattered;
 			vec3 attenuation;
-
+			
 			//if the number of bounces is under the threshold
 			//and the scatter results in another hit
+
 			if (depth < cam->max_bounces && rec.mat_ptr->scatter(r, rec.p, rec.normal, attenuation, scattered)) {
 				//return the color of the scattered ray
 				col = attenuation * color(scattered, depth + 1);
@@ -118,7 +121,10 @@ vec3 World::color(const ray& r, int depth) {
 		}
 		
 	}
-
+	if (skewed && !hitFlag) {
+		ray skewed_ray = ray(r.point_at_parameter(closest), next);
+		col = color(skewed_ray, depth + 1);
+	}
 	return col;
 
 	
@@ -127,7 +133,7 @@ vec3 World::color(const ray& r, int depth) {
 }
 
 //determines the value for each pixel and sets it to output
-void World::render(WindowHandler* output)
+void World::render(ScreenData* output)
 {
 	//the number of threads to use;
 	const int thread_axis_count = 1 / THREAD_CHUNK;
@@ -150,7 +156,7 @@ void World::render(WindowHandler* output)
 	}
 }
 
-void World::renderSection(WindowHandler* output, float x, float y, float w, float h)
+void World::renderSection(ScreenData* output, float x, float y, float w, float h)
 {
 	//get the number of pixels to output
 	int width = output->getWidth();
@@ -182,7 +188,9 @@ void World::renderSection(WindowHandler* output, float x, float y, float w, floa
 				ray r = cam->get_ray(u, v);
 
 				//get the color value for the given ray
+
 				col += color(r, 0);
+
 				
 
 			}

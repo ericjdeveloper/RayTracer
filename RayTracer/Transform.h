@@ -10,7 +10,7 @@ class Transform {
 public:
 	vec3 position;
 	vec3 rotation;
-	float scale =1;
+	vec3 scale = vec3(1,1,1);
 
 	vec3 applyTransform(vec3 inV, bool isPosition);
 };
@@ -24,9 +24,9 @@ vec3 Transform::applyTransform(vec3 inV, bool isPosition = false)
 	float r_z = rotation.z() * DEG2RAD;
 
 	//get initial values
-	float x = inV.x();
-	float y = inV.y();
-	float z = inV.z();
+	float x = inV.x() * scale.x();
+	float y = inV.y() * scale.y();
+	float z = inV.z() * scale.z();
 	
 	//apply x rotation
 	float x_x = x;
@@ -44,7 +44,7 @@ vec3 Transform::applyTransform(vec3 inV, bool isPosition = false)
 	float z_xyz = z_xy;
 
 	//apply the transformation
-	vec3 transformed = vec3(x_xyz, y_xyz, z_xyz) * scale;
+	vec3 transformed = vec3(x_xyz, y_xyz, z_xyz);
 
 	//return rotated vector
 	if (isPosition)

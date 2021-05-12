@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Meshes">
       <UniqueIdentifier>{aeb2de6e-c538-4316-bb61-81837b236bdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\WindowRenderers">
+      <UniqueIdentifier>{a44563ef-d117-4e5a-bcb9-87cd7dfabfcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -24,24 +27,15 @@
     <ClCompile Include="vec3.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.h">
+      <Filter>Source Files\WindowRenderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ray.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lambertian.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="metal.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameEngine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowHandler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
@@ -70,6 +64,33 @@
     </ClInclude>
     <ClInclude Include="Cube.h">
       <Filter>Source Files\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="LiminalWorld.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiminalVolume.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lambertian.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Metal.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLWindowRenderer.h">
+      <Filter>Source Files\WindowRenderers</Filter>
+    </ClInclude>
+    <ClInclude Include="PPMRenderer.h">
+      <Filter>Source Files\WindowRenderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenData.h">
+      <Filter>Source Files\WindowRenderers</Filter>
+    </ClInclude>
+    <ClInclude Include="TerminalRenderer.h">
+      <Filter>Source Files\WindowRenderers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
