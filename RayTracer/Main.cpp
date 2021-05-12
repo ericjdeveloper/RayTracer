@@ -16,7 +16,26 @@ int main(int argc, char* argv[])
 	int height = 50;
 	int scale = 1;
 
-	Renderer* rend = new TerminalRenderer(width * scale, height * scale);
+
+	Renderer *rend = nullptr;
+	if (argc == 2)
+	{
+		switch (*argv[1])
+		{
+			case 'a':
+				rend = new TerminalRenderer(width * scale, height * scale);
+				break;
+			case 'i':
+				rend = new PPMRenderer(width * scale, height * scale);
+				break;
+			default:
+				rend = new SDLWindowRenderer(width * scale, height * scale);
+		}
+	}
+	else
+	{
+		rend = new SDLWindowRenderer(width * scale, height * scale);
+	}
 
 	//initialize the game engine
 	GameEngine *ge = new GameEngine(rend, 1, width, height);
