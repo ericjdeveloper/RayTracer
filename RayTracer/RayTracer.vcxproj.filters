@@ -19,6 +19,9 @@
     <Filter Include="Source Files\WindowRenderers">
       <UniqueIdentifier>{a44563ef-d117-4e5a-bcb9-87cd7dfabfcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\WorldSpaces">
+      <UniqueIdentifier>{f18ba4be-3f07-4f57-8b56-07d82dfef8fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -91,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="TerminalRenderer.h">
       <Filter>Source Files\WindowRenderers</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldSpace.h">
+      <Filter>Source Files\WorldSpaces</Filter>
+    </ClInclude>
+    <ClInclude Include="EuclideanSpace.h">
+      <Filter>Source Files\WorldSpaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
 #include "ScreenData.h"
 #include "Item.h"
 #include "Camera.h"
-#include "LiminalWorld.h"
+#include "WorldSpace.h"
 
 using namespace std;
 #define THREAD_CHUNK 0.1
@@ -27,7 +27,7 @@ public:
 	//the world camera
 	Camera *cam;
 
-	LiminalWorld* lw;
+	WorldSpace* ws;
 
 private:
 	//the list of world objects
@@ -52,7 +52,7 @@ World::World()
 	//initialize camera object
 	cam = new Camera(vec3 (0, 1, -3));
 
-	lw = new LiminalWorld();
+	///lw = new LiminalWorld();
 }
 
 //function for getting a random point within a unit sphere
@@ -77,58 +77,22 @@ vec3 World::random_in_unit_sphere() {
 //gets the color value for a given ray
 vec3 World::color(const ray& r, int depth) {
 
-	//record data for a hit point on the ray
-	hit_record rec;
-
-	
-	vec3 unit_direction = unit_vector(r.direction());
-	float t = 0.5*(unit_direction.y() + 1.0);
-	vec3 col = (1.0f - t)*vec3(1, 1, 1) + t * vec3(0.5f, 0.7f, 1.0f);
 
 
-	float closest = FLT_MAX;
+	//create color variable
+	vec3 col = vec3(0, 0, 0);
 
-	vec3 next = vec3(0,0,0);
-
-	bool skewed = lw->volumeHit(r, closest, next);
-	bool hitFlag = false;
-
-
-	//loop through all the items in the world
-	for (int i = 0; i < item_count; i++) {
-
-		//if the item registers a hit
-		if (world_objects[i]->hit(r, 0.001, closest, rec)) {
-			hitFlag = true;
-
-			//create a new reflection ray
-			ray scattered;
-			vec3 attenuation;
-			
-			//if the number of bounces is under the threshold
-			//and the scatter results in another hit
-
-			if (depth < cam->max_bounces && rec.mat_ptr->scatter(r, rec.p, rec.normal, attenuation, scattered)) {
-				//return the color of the scattered ray
-				col = attenuation * color(scattered, depth + 1);
-			}
-			else {
-				col = vec3(0, 0, 0);
-			}
-
-
-			closest = rec.t;
-		}
-		
+	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
+	{
+		//background color
+		///vec3 unit_direction = unit_vector(r.direction());
+		///float t = 0.5*(unit_direction.y() + 1.0);
+		///(1.0f - t)*vec3(1, 1, 1) + t * vec3(0.5f, 0.7f, 1.0f);
+		col = vec3(0.0f, .28f, .98f);
 	}
-	if (skewed && !hitFlag) {
-		ray skewed_ray = ray(r.point_at_parameter(closest), next);
-		col = color(skewed_ray, depth + 1);
-	}
+
+
 	return col;
-
-	
-	
 	
 }
 
