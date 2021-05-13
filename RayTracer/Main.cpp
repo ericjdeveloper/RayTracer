@@ -1,4 +1,5 @@
-#include <iostream>
+﻿#include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <float.h>
@@ -12,14 +13,24 @@
 //creates and launges the game engine
 int main(int argc, char* argv[])
 {
-	int width = 100;
-	int height = 50;
-	int scale = 1;
+	int width = 300;
+	int height = 150;
+	int scale = 2;
 
 
 	Renderer *rend = nullptr;
-	if (argc == 2)
+	if (argc >= 2)
 	{
+		if (argc >= 4)
+		{
+			if (argc >= 5)
+				scale = atoi(argv[4]);
+
+			width = atoi(argv[2]);
+			height = atoi(argv[3]);
+		}
+
+
 		switch (*argv[1])
 		{
 			case 'a':
@@ -37,11 +48,15 @@ int main(int argc, char* argv[])
 		rend = new SDLWindowRenderer(width * scale, height * scale);
 	}
 
+
+
+
+
 	//initialize the game engine
 	GameEngine *ge = new GameEngine(rend, 1, width, height);
 
 	//start it
 	ge->startGame();
-	
+
 	return 0;
 }
