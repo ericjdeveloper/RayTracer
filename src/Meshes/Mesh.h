@@ -1,9 +1,9 @@
 #pragma once
 
-#include "vec3.h"
+#include "Vec3.h"
 #include "Transform.h"
-#include "ray.h"
-#include "material.h"
+#include "Ray.h"
+#include "Materials\Material.h"
 
 //struct for the collision data of an object
 struct hit_record {

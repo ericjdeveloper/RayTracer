@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Entity.h"
-#include "Mesh.h";
-#include "Material.h"
+#include "Meshes\\Mesh.h"
+#include "Materials\\Material.h"
 
 //the item is a child of entity;
 //it has some form of physical appearance

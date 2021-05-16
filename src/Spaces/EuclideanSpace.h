@@ -3,13 +3,13 @@
 #include "WorldSpace.h"
 
 
-class Euclidean : public WorldSpace {
+class EuclideanSpace : public WorldSpace {
 public:
 	bool getColor(const ray& r, Item **wrld_ob, int itm_cnt, int depth, vec3& color);
 };
 
 
-bool Euclidean::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, vec3& col)
+bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, vec3& col)
 {
 
 	float closest = FLT_MAX;

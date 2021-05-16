@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "ray.h"
+#include "Ray.h"
 
 //Camera handles in-world aspect of the rendering
 class Camera : public Entity {

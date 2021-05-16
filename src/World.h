@@ -6,7 +6,7 @@
 #include "ScreenData.h"
 #include "Item.h"
 #include "Camera.h"
-#include "WorldSpace.h"
+#include "Spaces/EuclideanSpace.h"
 
 using namespace std;
 #define THREAD_CHUNK 0.1
@@ -34,7 +34,7 @@ private:
 	Item **world_objects;
 
 	//the number of items in world_objects
-	int item_count;
+	int item_count = 0;
 
 	//function for obtaining the color of the given ray
 	vec3 color(const ray&, int depth);
@@ -53,6 +53,7 @@ World::World()
 	cam = new Camera(vec3 (0, 1, -3));
 
 	///lw = new LiminalWorld();
+	ws = new EuclideanSpace();
 }
 
 //function for getting a random point within a unit sphere
@@ -182,6 +183,8 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 //adds an object to the list of objects
 void World::addObject(Item *item)
 {
+
+	
 	//create a new list 1 item larger
 	Item **new_obs = new Item*[item_count + 1];
 
@@ -197,4 +200,5 @@ void World::addObject(Item *item)
 
 	//set the world_objects list to be this new list
 	world_objects = new_obs;
+	
 }

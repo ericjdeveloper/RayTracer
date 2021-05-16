@@ -4,9 +4,11 @@
 #include <string>
 #include <float.h>
 
-#include "SDLWindowRenderer.h"
-#include "PPMRenderer.h"
-#include "TerminalRenderer.h"
+#include "Renderers\Renderer.h"
+#include "Renderers\SDLWindowRenderer.h"
+#include "Renderers\PPMRenderer.h"
+#include "Renderers\TerminalRenderer.h"
+
 #include "GameEngine.h"
 
 //main function

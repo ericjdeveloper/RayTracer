@@ -3,17 +3,17 @@
 #include <chrono>
 using namespace std::chrono;
 
-#include "Renderer.h";
+#include "Renderers\\Renderer.h"
 #include "World.h"
 
-#include "Mesh.h";
-#include "Sphere.h";
-#include "Cube.h";
-#include "Plane.h";
+#include "Meshes\\Mesh.h"
+#include "Meshes\\Sphere.h"
+#include "Meshes\\Cube.h"
+#include "Meshes\\Plane.h"
 
-#include "material.h"
-#include "lambertian.h"
-#include "metal.h"
+#include "Materials\Material.h"
+#include "Materials\Lambertian.h"
+#include "Materials\Metal.h"
 
 #define SAMPLE_COUNT 20
 
@@ -75,7 +75,7 @@ void GameEngine::startGame()
 	//*/
 
 	
-
+/*
 	//add the liminal volumes
 	LiminalVolume* vol_plane1 = new LiminalVolume(vec3(0, 0.5, -1.5), new PlaneMesh(vec3(0,0,-1)), vec3(1,1,0.3));
 	vol_plane1->transform.scale = vec3(1, 1, 1);
@@ -84,7 +84,7 @@ void GameEngine::startGame()
 	LiminalVolume* vol_plane2 = new LiminalVolume(vec3(0, 0.5, 1.5), new PlaneMesh(vec3(0,0,1)), vec3(1, 1, 0.3));
 	vol_plane2->transform.scale = vec3(1, 1, 1);
 	world->lw->addVolume(vol_plane2);
-
+*/
 
 
 	Item* wall1 = new Item(vec3(-0.5, 0.5, 0), new PlaneMesh(vec3(-1,0,0)), new Lambertian(vec3(0.1, 0.1, 0.8)));
@@ -107,7 +107,7 @@ void GameEngine::startGame()
 //handles all functions executed for each loop of the game
 void GameEngine::gameLoop()
 {
-	
+
 	int cameraAngle = 0;
 	float c_dist = -3;
 
@@ -135,6 +135,7 @@ void GameEngine::gameLoop()
 		*/
 
 		cameraAngle = cameraAngle + 5;
+		
 		if (cameraAngle == 360)
 		{
 			exitFlag = true;
