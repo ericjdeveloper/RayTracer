@@ -19,7 +19,7 @@ completely implemented. However, all design choices made now will be made with t
 Installing this program is fairly simple. The only dependencies are the SDL2 library, which can be found [here](https://www.libsdl.org/download-2.0.php).
 I used visual studio code, but other programs will require different methods for including this library.
 
-to build, you'll need to compile the c program. It will vary based on your file paths, but here's an example build call:
+to build, you'll need to compile the c program. It will vary based on your file paths, but here's an example build call:\n
 `g++.exe -g \src\Main.cpp -o \build\Raytracer.exe -I\src -I[PATH_TO_SDL_INCLUDE] -L[PATH_TO_SDL_LIB] -lmingw32 -lSDL2main -lSDL2 -mwindows`
 
 running is as easy as going to the build folder and clicking on the .exe (make sure that the SDL2.dll is present)
