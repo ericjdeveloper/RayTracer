@@ -3,17 +3,17 @@
 #include <chrono>
 using namespace std::chrono;
 
-#include "Renderer.h";
+#include "Renderers\\Renderer.h"
 #include "World.h"
 
-#include "Mesh.h";
-#include "Sphere.h";
-#include "Cube.h";
-#include "Plane.h";
+#include "Meshes\\Mesh.h"
+#include "Meshes\\Sphere.h"
+#include "Meshes\\Cube.h"
+#include "Meshes\\Plane.h"
 
-#include "material.h"
-#include "lambertian.h"
-#include "metal.h"
+#include "Materials\Material.h"
+#include "Materials\Lambertian.h"
+#include "Materials\Metal.h"
 
 #define SAMPLE_COUNT 20
 
@@ -62,42 +62,48 @@ void GameEngine::startGame()
 
 	//add a ground plane and a metal sphere
 	//just to test
-	world->addObject(new Item(vec3(0, 0, 0), new PlaneMesh(vec3(0, 1, 0), 5, vec3(0, 0, -1)), new Lambertian(vec3(0.6, 0.8, 0.0))));
-	
-	Item* cube = new Item(vec3(0, 0.5, 0), new CubeMesh(), new Lambertian(vec3(0.8, 0.1, 0.2)));
-	cube->transform.scale = vec3(0.5, 0.5, 0.5);
-	//world->addObject(cube);
 
+
+
+
+	world->addObject(new Item(Vec3(0, 0, 0), new PlaneMesh(Vec3(0, 1, 0), 5, Vec3(0, 0, -1)), new Lambertian(Vec3(0.6, 0.8, 0.0))));
 	
-	Item* sphere = new Item(vec3(1, 0.5, 5), new SphereMesh(), new Metal(vec3(0.3, 0.5, 0.1), 0.3));
-	///sphere->transform.scale = vec3(0,3,0);
+
+	Item* cube = new Item(Vec3(0, 0.5, 0), new CubeMesh(), new Lambertian(Vec3(0.8, 0.1, 0.2)));
+	cube->transform.scale = Vec3(0.5, 0.5, 0.5);
+	world->addObject(cube);
+	
+	Item* sphere = new Item(Vec3(1, 0.5, 5), new SphereMesh(), new Metal(Vec3(0.3, 0.5, 0.1), 0.3));
+	sphere->transform.scale = Vec3(0,3,0);
 	world->addObject(sphere);
 	//*/
 
 	
 
-	//add the liminal volumes
-	LiminalVolume* vol_plane1 = new LiminalVolume(vec3(0, 0.5, -1.5), new PlaneMesh(vec3(0,0,-1)), vec3(1,1,0.3));
-	vol_plane1->transform.scale = vec3(1, 1, 1);
+/*	//add the liminal volumes
+	LiminalVolume* vol_plane1 = new LiminalVolume(Vec3(0, 0.5, -1.5), new PlaneMesh(Vec3(0,0,-1)), Vec3(1,1,0.3));
+	vol_plane1->transform.scale = Vec3(1, 1, 1);
 	world->lw->addVolume(vol_plane1);
 
-	LiminalVolume* vol_plane2 = new LiminalVolume(vec3(0, 0.5, 1.5), new PlaneMesh(vec3(0,0,1)), vec3(1, 1, 0.3));
-	vol_plane2->transform.scale = vec3(1, 1, 1);
+	LiminalVolume* vol_plane2 = new LiminalVolume(Vec3(0, 0.5, 1.5), new PlaneMesh(Vec3(0,0,1)), Vec3(1, 1, 0.3));
+	vol_plane2->transform.scale = Vec3(1, 1, 1);
 	world->lw->addVolume(vol_plane2);
+*/
 
 
-
-	Item* wall1 = new Item(vec3(-0.5, 0.5, 0), new PlaneMesh(vec3(-1,0,0)), new Lambertian(vec3(0.1, 0.1, 0.8)));
-	wall1->transform.scale = vec3(1, 1, 3);
+	Item* wall1 = new Item(Vec3(-0.5, 0.5, 0), new PlaneMesh(Vec3(-1,0,0)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
+	wall1->transform.scale = Vec3(1, 1, 3);
 	world->addObject(wall1);
 
-	Item* wall2 = new Item(vec3(0.5, 0.5, 0), new PlaneMesh(vec3(1,0,0)), new Lambertian(vec3(0.1, 0.1, 0.8)));
-	wall2->transform.scale = vec3(1, 1, 3);
+	Item* wall2 = new Item(Vec3(0.5, 0.5, 0), new PlaneMesh(Vec3(1,0,0)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
+	wall2->transform.scale = Vec3(1, 1, 3);
 	world->addObject(wall2);
 
-	Item* wall3 = new Item(vec3(0, 1, 0), new PlaneMesh(vec3(0,1,0), 1, vec3(0,0,1)), new Lambertian(vec3(0.1, 0.1, 0.8)));
-	wall3->transform.scale = vec3(1, 1, 3);
+	Item* wall3 = new Item(Vec3(0, 1, 0), new PlaneMesh(Vec3(0,1,0), 1, Vec3(0,0,1)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
+	wall3->transform.scale = Vec3(1, 1, 3);
 	world->addObject(wall3);
+
+
 
 
 	gameLoop();
@@ -107,7 +113,7 @@ void GameEngine::startGame()
 //handles all functions executed for each loop of the game
 void GameEngine::gameLoop()
 {
-	
+
 	int cameraAngle = 0;
 	float c_dist = -3;
 
@@ -135,6 +141,7 @@ void GameEngine::gameLoop()
 		*/
 
 		cameraAngle = cameraAngle + 5;
+		
 		if (cameraAngle == 360)
 		{
 			exitFlag = true;
@@ -142,8 +149,8 @@ void GameEngine::gameLoop()
 		}
 
 
-		world->cam->transform.position = vec3(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
-		world->cam->transform.rotation = vec3(0, cameraAngle, 0);
+		world->cam->transform.position = Vec3(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
+		world->cam->transform.rotation = Vec3(0, cameraAngle, 0);
 
 
 		//calculate the image of the current frame

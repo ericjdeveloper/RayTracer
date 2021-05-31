@@ -6,10 +6,10 @@
 #include "ScreenData.h"
 #include "Item.h"
 #include "Camera.h"
-#include "WorldSpace.h"
+#include "Spaces/EuclideanSpace.h"
 
 using namespace std;
-#define THREAD_CHUNK 0.1
+#define THREAD_COUNT 10
 
 
 //object to handle the Entities in the world
@@ -34,13 +34,13 @@ private:
 	Item **world_objects;
 
 	//the number of items in world_objects
-	int item_count;
+	int item_count = 0;
 
 	//function for obtaining the color of the given ray
-	vec3 color(const ray&, int depth);
+	Vec3 color(const ray&, int depth);
 
 	//function for getting a random point within a unit sphere
-	vec3 random_in_unit_sphere();
+	Vec3 random_in_unit_sphere();
 
 
 
@@ -50,15 +50,16 @@ private:
 World::World()
 {
 	//initialize camera object
-	cam = new Camera(vec3 (0, 1, -3));
+	cam = new Camera(Vec3 (0, 1, -3));
 
 	///lw = new LiminalWorld();
+	ws = new EuclideanSpace();
 }
 
 //function for getting a random point within a unit sphere
-vec3 World::random_in_unit_sphere() {
+Vec3 World::random_in_unit_sphere() {
 	//the point to return
-	vec3 p;
+	Vec3 p;
 	
 	//get random values for p while the distance between p and
 	//the center is larger than 1
@@ -66,7 +67,7 @@ vec3 World::random_in_unit_sphere() {
 		float randx = ((double)rand() / (RAND_MAX + 1));
 		float randy = ((double)rand() / (RAND_MAX + 1));
 		float randz = ((double)rand() / (RAND_MAX + 1));
-		p = 2.0*vec3(randx, randy, randz) - vec3(1, 1, 1);
+		p = 2.0*Vec3(randx, randy, randz) - Vec3(1, 1, 1);
 
 	} while (p.squared_length() >= 1);
 
@@ -75,20 +76,20 @@ vec3 World::random_in_unit_sphere() {
 }
 
 //gets the color value for a given ray
-vec3 World::color(const ray& r, int depth) {
+Vec3 World::color(const ray& r, int depth) {
 
 
 
 	//create color variable
-	vec3 col = vec3(0, 0, 0);
+	Vec3 col = Vec3(0, 0, 0);
 
 	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
 	{
 		//background color
-		///vec3 unit_direction = unit_vector(r.direction());
+		///Vec3 unit_direction = unit_vector(r.direction());
 		///float t = 0.5*(unit_direction.y() + 1.0);
-		///(1.0f - t)*vec3(1, 1, 1) + t * vec3(0.5f, 0.7f, 1.0f);
-		col = vec3(0.0f, .28f, .98f);
+		///(1.0f - t)*Vec3(1, 1, 1) + t * Vec3(0.5f, 0.7f, 1.0f);
+		col = Vec3(0.0f, .28f, .98f);
 	}
 
 
@@ -99,25 +100,29 @@ vec3 World::color(const ray& r, int depth) {
 //determines the value for each pixel and sets it to output
 void World::render(ScreenData* output)
 {
-	//the number of threads to use;
-	const int thread_axis_count = 1 / THREAD_CHUNK;
+#if THREAD_COUNT > 1
 
-	thread threads[thread_axis_count * thread_axis_count];
+		float thread_chunk = 1.0f / THREAD_COUNT;
+		thread threads[THREAD_COUNT * THREAD_COUNT];
 
 
-	for (int i = 0; i < thread_axis_count; i++)
-	{
-		for (int j = 0; j < thread_axis_count; j++)
+		for (int i = 0; i < THREAD_COUNT; i++)
 		{
-			threads[(i * thread_axis_count) + j] = thread(&World::renderSection, this, output, i * THREAD_CHUNK, j * THREAD_CHUNK, THREAD_CHUNK, THREAD_CHUNK);
+			for (int j = 0; j < THREAD_COUNT; j++)
+			{
+				
+				threads[(i * THREAD_COUNT) + j] = thread(&World::renderSection, this, output, i * thread_chunk, j  * thread_chunk, thread_chunk, thread_chunk);
+			}
 		}
-	}
-	
-	
-	for (int i = 0; i < thread_axis_count * thread_axis_count; i++)
-	{
-		threads[i].join();
-	}
+
+
+		for (int i = 0; i < THREAD_COUNT * THREAD_COUNT; i++)
+		{
+			threads[i].join();
+		}
+#else
+		renderSection(output, 0,0,1, 1);
+#endif
 }
 
 void World::renderSection(ScreenData* output, float x, float y, float w, float h)
@@ -133,7 +138,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 		for (int i = y * height; i < (y + h) * height; i++)
 		{
 			//set a base color
-			vec3 col(0, 0, 0);
+			Vec3 col(0, 0, 0);
 
 			//repeat this for each sample
 			for (int s = 0; s < cam->samples; s++) {
@@ -162,7 +167,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 			col /= float(cam->samples);
 			
 			//gamma adjustment
-			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+			col = Vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
 
 			//get the Uint8 values
 			Uint8 ir = Uint8(255.99 * col[0]);
@@ -182,6 +187,8 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 //adds an object to the list of objects
 void World::addObject(Item *item)
 {
+
+	
 	//create a new list 1 item larger
 	Item **new_obs = new Item*[item_count + 1];
 
@@ -197,4 +204,5 @@ void World::addObject(Item *item)
 
 	//set the world_objects list to be this new list
 	world_objects = new_obs;
+	
 }

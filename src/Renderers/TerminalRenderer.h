@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "Renderer.h"
-#include "vec3.h"
+#include "Vec3.h"
 
 using namespace std;
 

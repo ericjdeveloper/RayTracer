@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Renderer.h"
-#include "vec3.h"
+#include "Vec3.h"
 
 class PPMRenderer : public Renderer {
 public:	

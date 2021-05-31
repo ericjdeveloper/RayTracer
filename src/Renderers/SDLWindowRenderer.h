@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Renderer.h"
-#include "vec3.h"
+#include "Vec3.h"
 
 //class for handling the output of the render
 class SDLWindowRenderer : public Renderer{
