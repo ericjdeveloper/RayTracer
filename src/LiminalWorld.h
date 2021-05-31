@@ -8,7 +8,7 @@ public:
 	int volumeCount = 0;
 
 
-	bool volumeHit(const ray& r, float& t, vec3& nextDirection);
+	bool volumeHit(const ray& r, float& t, Vec3& nextDirection);
 
 
 	void addVolume(LiminalVolume* vol);
@@ -33,11 +33,11 @@ void LiminalWorld::addVolume(LiminalVolume* vol)
 	volumes = new_obs;
 }
 
-bool LiminalWorld::volumeHit(const ray& r, float& t, vec3& skewed)
+bool LiminalWorld::volumeHit(const ray& r, float& t, Vec3& skewed)
 {
 
 
-	t = FLT_MAX;
+	t = 1000;
 	bool hitFlag = false;
 
 	for (int i = 0; i < volumeCount; i++)

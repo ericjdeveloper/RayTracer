@@ -7,44 +7,44 @@
 class PlaneMesh : public Mesh {
 public:
 	//constructor
-	PlaneMesh(vec3 f=vec3(0,0,-1), float w=1, vec3 u = vec3(0,1,0), vec3 cen = vec3(0, 0, 0)) : center(cen), width(w), facing(f), up(u){};
+	PlaneMesh(Vec3 f=Vec3(0,0,-1), float w=1, Vec3 u = Vec3(0,1,0), Vec3 cen = Vec3(0, 0, 0)) : center(cen), width(w), facing(f), up(u){};
 
 	//override
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
 	
-	vec3 center;
+	Vec3 center;
 	float width;
-	vec3 facing;
-	vec3 up;
+	Vec3 facing;
+	Vec3 up;
 };
 
 //hit override
 bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
 	
 	//Math is based off of the plane generation from "A minimal ray-tracer"
-	vec3 tfmFacing = transform->applyTransform(facing);
+	Vec3 tfmFacing = transform->applyTransform(facing);
 	
 	float denom = dot(-r.direction(), tfmFacing);
 
 	if (abs(denom) > 1e-6) {
 
-		vec3 globalCenter = transform->applyTransform(center, true);
+		Vec3 globalCenter = transform->applyTransform(center, true);
 
-		vec3 p0l0 = r.origin() - globalCenter;
+		Vec3 p0l0 = r.origin() - globalCenter;
 		float temp = dot(p0l0, tfmFacing) / denom;
 
 		
 		if (temp > t_min && temp < t_max)
 		{
-			vec3 tfmUp = transform->applyTransform(up);
+			Vec3 tfmUp = transform->applyTransform(up);
 
 
-			vec3 p = r.point_at_parameter(temp);
-			vec3 v = p - globalCenter;
+			Vec3 p = r.point_at_parameter(temp);
+			Vec3 v = p - globalCenter;
 
-			vec3 right = cross(facing, up);
-			vec3 tfmRight = transform->applyTransform(right);
+			Vec3 right = cross(facing, up);
+			Vec3 tfmRight = transform->applyTransform(right);
 
 			
 			float scaled_width = (width / 2) * abs(dot(right, transform->scale));

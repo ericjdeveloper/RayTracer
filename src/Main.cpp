@@ -4,6 +4,7 @@
 #include <string>
 #include <float.h>
 
+
 #include "Renderers\Renderer.h"
 #include "Renderers\SDLWindowRenderer.h"
 #include "Renderers\PPMRenderer.h"
@@ -18,6 +19,7 @@ int main(int argc, char* argv[])
 	int width = 300;
 	int height = 150;
 	int scale = 2;
+
 
 
 	Renderer *rend = nullptr;
@@ -52,13 +54,12 @@ int main(int argc, char* argv[])
 
 
 
-
-
 	//initialize the game engine
 	GameEngine *ge = new GameEngine(rend, 1, width, height);
 
 	//start it
 	ge->startGame();
+
 
 	return 0;
 }

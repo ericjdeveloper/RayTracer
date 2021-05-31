@@ -5,11 +5,11 @@
 
 class EuclideanSpace : public WorldSpace {
 public:
-	bool getColor(const ray& r, Item **wrld_ob, int itm_cnt, int depth, vec3& color);
+	bool getColor(const ray& r, Item **wrld_ob, int itm_cnt, int depth, Vec3& color);
 };
 
 
-bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, vec3& col)
+bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, Vec3& col)
 {
 
 	float closest = FLT_MAX;
@@ -25,18 +25,22 @@ bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int de
 
 		//if the item registers a hit
 		if (wrld_obs[i]->hit(r, 0.001, closest, rec)) {
+
 			closest = rec.t;
 			closest_index = i;
+
 		}
+
 	}
 
-	if (closest_index == -1)
-	return false;
+	if (closest_index == -1){
+		return false;
+	}
 
 
 	//create a new reflection ray
 	ray scattered;
-	vec3 attenuation;
+	Vec3 attenuation;
 
 	//if the number of bounces is under the threshold
 	//and the scatter results in another hit
@@ -44,11 +48,13 @@ bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int de
 		//return the color of the scattered ray
 		int newDepth = depth - 1;
 
-		getColor(scattered, wrld_obs, itm_cnt, newDepth, col);
-		col *= attenuation;		
+		Vec3 scattered_color = Vec3(1,1,1);
+		getColor(scattered, wrld_obs, itm_cnt, newDepth, scattered_color);
+
+		col = attenuation * scattered_color;		
 	}
 	else {
-	col = vec3(0, 0, 0);
+		col = Vec3(1,1,1);
 	}
 
 	return true;

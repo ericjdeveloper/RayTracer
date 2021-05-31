@@ -8,8 +8,8 @@
 //struct for the collision data of an object
 struct hit_record {
 	float t;
-	vec3 p;
-	vec3 normal;
+	Vec3 p;
+	Vec3 normal;
 	Material *mat_ptr;
 };
 
