@@ -33,6 +33,7 @@ bool EuclideanSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int de
 
 	}
 
+	//if no object is hit, return false
 	if (closest_index == -1){
 		return false;
 	}

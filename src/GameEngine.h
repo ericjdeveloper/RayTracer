@@ -3,6 +3,9 @@
 #include <chrono>
 using namespace std::chrono;
 
+#include <thread>
+using namespace std;
+
 #include "Renderers\\Renderer.h"
 #include "World.h"
 
@@ -26,6 +29,9 @@ public:
 	//starts the game
 	void startGame();
 
+	void render();
+
+	bool isRendering = false;
 private:
 	//the main loop of the game
 	void gameLoop();
@@ -38,6 +44,9 @@ private:
 
 	//the world object
 	World *world;
+
+	thread *renderThread;
+
 };
 
 //constructor
@@ -45,6 +54,7 @@ GameEngine::GameEngine(Renderer *rends, int r_cnt, int screen_width, int screen_
 {
 	r_count = r_cnt;
 	renderers = rends;
+	renderThread = nullptr;
 
 	//create a new window
 	output = new ScreenData(screen_width, screen_height);
@@ -113,62 +123,71 @@ void GameEngine::startGame()
 //handles all functions executed for each loop of the game
 void GameEngine::gameLoop()
 {
-
-	int cameraAngle = 0;
+	//variable for holding the camera angle
+	float cameraAngle = 0;
+	//distance that the camera is from the focus point 
 	float c_dist = -3;
 
+	//flag to determine whether to exit the program
 	bool exitFlag = false;
 
-	
+	//main game loop
 	while (!exitFlag) {
-		auto start = high_resolution_clock::now();
 
+		//event holder
 		SDL_Event e;
 
-		/*
+		//while events continue to occur
 		while (SDL_PollEvent(&e))
 		{
+			//handle events differently based on the input
 			switch (e.type)
 			{
+			//if the x button is pressed, closed the application
 			case SDL_QUIT: exitFlag = true; break;
 
-			case SDL_KEYDOWN:
-				cameraAngle = (cameraAngle + 10) % 360;
-				
-				break;
 			}
 		}
-		*/
-
-		cameraAngle = cameraAngle + 5;
 		
-		if (cameraAngle == 360)
+		//if we are not currently rendering a frame
+		//update the world
+		if(!isRendering)
 		{
-			exitFlag = true;
-			continue;
+			//spin the camera
+			cameraAngle = cameraAngle + 5;
+
+			//update the camera position
+			world->cam->transform.position = Vec3(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
+			world->cam->transform.rotation = Vec3(0, cameraAngle, 0);
+
+
+			//if the thread is still alive,
+			//join it back
+			if(renderThread != nullptr)
+				renderThread->join();
+
+			//set rendering to true,
+			//and create a new thread
+			isRendering = true;
+			renderThread = new thread(GameEngine::render, this); 
 		}
 
-
-		world->cam->transform.position = Vec3(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
-		world->cam->transform.rotation = Vec3(0, cameraAngle, 0);
-
-
-		//calculate the image of the current frame
-		//and display it on the window
-		world->render(output);
-		
-		for (int i = 0; i < r_count; i++)
-		{
-			renderers[i].renderWindow(output);
-		}
-
-
-		auto end = high_resolution_clock::now();
-
-		duration<double> elapsed = end - start;
-
-		cout << 1 / elapsed.count() << "\n";
-
-		
 	}
+
+}
+
+//render function called in separate thread
+void GameEngine::render()
+{
+	//render the current world to the output screen
+	world->render(output);
+
+	//go through each renderer and output respectively
+	for (int i = 0; i < r_count; i++)
+	{
+		renderers[i].renderWindow(output);
+	}
+
+	//set the rendering flag
+	isRendering = false;
 }
