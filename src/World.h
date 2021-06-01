@@ -9,7 +9,8 @@
 #include "Spaces/EuclideanSpace.h"
 
 using namespace std;
-#define THREAD_COUNT 10
+//number of threads-per-axis to use
+#define THREAD_COUNT 5
 
 
 //object to handle the Entities in the world
@@ -86,10 +87,10 @@ Vec3 World::color(const ray& r, int depth) {
 	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
 	{
 		//background color
-		///Vec3 unit_direction = unit_vector(r.direction());
-		///float t = 0.5*(unit_direction.y() + 1.0);
-		///(1.0f - t)*Vec3(1, 1, 1) + t * Vec3(0.5f, 0.7f, 1.0f);
-		col = Vec3(0.0f, .28f, .98f);
+		Vec3 unit_direction = unit_vector(r.direction());
+		float t = 0.5*(unit_direction.y() + 1.0);
+		
+		col = (1.0f - t)*Vec3(1, 1, 1) + t * Vec3(0.5f, 0.7f, 1.0f);;//Vec3(0.0f, .28f, .98f);
 	}
 
 
@@ -100,28 +101,32 @@ Vec3 World::color(const ray& r, int depth) {
 //determines the value for each pixel and sets it to output
 void World::render(ScreenData* output)
 {
-#if THREAD_COUNT > 1
-
+//determines whether to use this thread to render
+//or to create a series of other renderers
+#if THREAD_COUNT == 1
+		//render the entire screen at once
+		renderSection(output, 0,0,1, 1);
+#else
+		//get the percentage that each thread takes
 		float thread_chunk = 1.0f / THREAD_COUNT;
+		//create an array to store the threads
 		thread threads[THREAD_COUNT * THREAD_COUNT];
 
-
+		//loop through the chunks to assign the threads 
 		for (int i = 0; i < THREAD_COUNT; i++)
 		{
 			for (int j = 0; j < THREAD_COUNT; j++)
 			{
-				
+				//create a thread and assign it the current chunk (with proper offset)
 				threads[(i * THREAD_COUNT) + j] = thread(&World::renderSection, this, output, i * thread_chunk, j  * thread_chunk, thread_chunk, thread_chunk);
 			}
 		}
 
-
+		//loop through all the threads and wait for them to complete
 		for (int i = 0; i < THREAD_COUNT * THREAD_COUNT; i++)
 		{
 			threads[i].join();
 		}
-#else
-		renderSection(output, 0,0,1, 1);
 #endif
 }
 
