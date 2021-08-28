@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vec3.h"
+#include "Vector.h"
 #include "Transform.h"
 #include "Ray.h"
 #include "Materials\Material.h"
@@ -8,8 +8,8 @@
 //struct for the collision data of an object
 struct hit_record {
 	float t;
-	Vec3 p;
-	Vec3 normal;
+	Vector p;
+	Vector normal;
 	Material *mat_ptr;
 };
 

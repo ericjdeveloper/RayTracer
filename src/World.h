@@ -38,10 +38,10 @@ private:
 	int item_count = 0;
 
 	//function for obtaining the color of the given ray
-	Vec3 color(const ray&, int depth);
+	Vector color(const ray&, int depth);
 
 	//function for getting a random point within a unit sphere
-	Vec3 random_in_unit_sphere();
+	Vector random_in_unit_sphere();
 
 
 
@@ -51,16 +51,16 @@ private:
 World::World()
 {
 	//initialize camera object
-	cam = new Camera(Vec3 (0, 1, -3));
+	cam = new Camera(Vector (0, 1, -3));
 
 	///lw = new LiminalWorld();
 	ws = new EuclideanSpace();
 }
 
 //function for getting a random point within a unit sphere
-Vec3 World::random_in_unit_sphere() {
+Vector World::random_in_unit_sphere() {
 	//the point to return
-	Vec3 p;
+	Vector p;
 	
 	//get random values for p while the distance between p and
 	//the center is larger than 1
@@ -68,7 +68,7 @@ Vec3 World::random_in_unit_sphere() {
 		float randx = ((double)rand() / (RAND_MAX + 1));
 		float randy = ((double)rand() / (RAND_MAX + 1));
 		float randz = ((double)rand() / (RAND_MAX + 1));
-		p = 2.0*Vec3(randx, randy, randz) - Vec3(1, 1, 1);
+		p = 2.0*Vector(randx, randy, randz) - Vector(1, 1, 1);
 
 	} while (p.squared_length() >= 1);
 
@@ -77,20 +77,20 @@ Vec3 World::random_in_unit_sphere() {
 }
 
 //gets the color value for a given ray
-Vec3 World::color(const ray& r, int depth) {
+Vector World::color(const ray& r, int depth) {
 
 
 
 	//create color variable
-	Vec3 col = Vec3(0, 0, 0);
+	Vector col = Vector(0, 0, 0);
 
 	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
 	{
 		//background color
-		Vec3 unit_direction = unit_vector(r.direction());
+		Vector unit_direction = unit_vector(r.direction());
 		float t = 0.5*(unit_direction.y() + 1.0);
 		
-		col = (1.0f - t)*Vec3(1, 1, 1) + t * Vec3(0.5f, 0.7f, 1.0f);;//Vec3(0.0f, .28f, .98f);
+		col = (1.0f - t)*Vector(1, 1, 1) + t * Vector(0.5f, 0.7f, 1.0f);;//Vector(0.0f, .28f, .98f);
 	}
 
 
@@ -143,7 +143,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 		for (int i = y * height; i < (y + h) * height; i++)
 		{
 			//set a base color
-			Vec3 col(0, 0, 0);
+			Vector col(0, 0, 0);
 
 			//repeat this for each sample
 			for (int s = 0; s < cam->samples; s++) {
@@ -172,7 +172,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 			col /= float(cam->samples);
 			
 			//gamma adjustment
-			col = Vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+			col = Vector(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
 
 			//get the Uint8 values
 			Uint8 ir = Uint8(255.99 * col[0]);

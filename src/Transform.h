@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vec3.h"
+#include "Vector.h"
 #define DEG2RAD M_PI/180.0
 #define RAD2DEG 180.0/M_PI
 
@@ -8,14 +8,14 @@
 //the transform class handles the postion, rotation and scale of the object
 class Transform {
 public:
-	Vec3 position;
-	Vec3 rotation;
-	Vec3 scale = Vec3(1,1,1);
+	Vector position;
+	Vector rotation;
+	Vector scale = Vector(1,1,1);
 
-	Vec3 applyTransform(Vec3 inV, bool isPosition);
+	Vector applyTransform(Vector inV, bool isPosition);
 };
 
-Vec3 Transform::applyTransform(Vec3 inV, bool isPosition = false)
+Vector Transform::applyTransform(Vector inV, bool isPosition = false)
 {
 
 	//convert rotation into radians
@@ -44,7 +44,7 @@ Vec3 Transform::applyTransform(Vec3 inV, bool isPosition = false)
 	float z_xyz = z_xy;
 
 	//apply the transformation
-	Vec3 transformed = Vec3(x_xyz, y_xyz, z_xyz);
+	Vector transformed = Vector(x_xyz, y_xyz, z_xyz);
 
 	//return rotated vector
 	if (isPosition)

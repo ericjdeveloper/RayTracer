@@ -7,13 +7,13 @@
 class SphereMesh : public Mesh {
 public:
 	//initializer that sets center, radius, and material
-	SphereMesh(float d=1, Vec3 cen = Vec3(0,0,0)) : center(cen), diameter(d) {};
+	SphereMesh(float d=1, Vector cen = Vector(0,0,0,0)) : center(cen), diameter(d) {};
 
 	//override for the hit call
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
 	//data for center, radius, and material;
-	Vec3 center;
+	Vector center;
 	float diameter;
 };
 
@@ -24,11 +24,11 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 	//but the quick explanation is that the intersection of a line can be determined by
 	//the quadratic equation. 
 	
-	Vec3 globalCenter = transform->applyTransform(center, true);
+	Vector globalCenter = transform->applyTransform(center, true);
 	float radius = diameter / 2;
 	float scaledRadius = radius;/// transform->scale.length();
 
-	Vec3 oc = r.origin() - globalCenter;
+	Vector oc = r.origin() - globalCenter;
 	float a = dot(r.direction(), r.direction());
 	float b = dot(oc, r.direction());
 	float c = dot(oc, oc) - (scaledRadius * scaledRadius);

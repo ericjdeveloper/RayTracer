@@ -8,15 +8,15 @@
 //cube override for the mesh
 class CubeMesh : public Mesh {
 public:
-	CubeMesh(float s=1, Vec3 cen = Vec3(0,0,0)) : center(cen), size(s){
+	CubeMesh(float s=1, Vector cen = Vector(0,0,0)) : center(cen), size(s){
 		
 		//create a new plane for each face
-		faces[0] = new PlaneMesh(Vec3(1, 0, 0),  size, Vec3(0, 1, 0),  center + Vec3(size / 2, 0, 0));
-		faces[1] = new PlaneMesh(Vec3(-1, 0, 0), size, Vec3(0, 1, 0),  center + Vec3(-size / 2, 0, 0));
-		faces[2] = new PlaneMesh(Vec3(0, 1, 0),  size, Vec3(0, 0, -1), center + Vec3(0, size / 2, 0));
-		faces[3] = new PlaneMesh(Vec3(0, -1, 0), size, Vec3(0, 1, -1), center + Vec3(0, -size / 2, 0));
-		faces[4] = new PlaneMesh(Vec3(0, 0, 1),  size, Vec3(0, 1, 0),  center + Vec3(0, 0, size / 2));
-		faces[5] = new PlaneMesh(Vec3(0, 0, -1), size, Vec3(0, 1, 0),  center + Vec3(0, 0, -size / 2));
+		faces[0] = new PlaneMesh(Vector(1, 0, 0),  size, Vector(0, 1, 0),  center + Vector(size / 2, 0, 0));
+		faces[1] = new PlaneMesh(Vector(-1, 0, 0), size, Vector(0, 1, 0),  center + Vector(-size / 2, 0, 0));
+		faces[2] = new PlaneMesh(Vector(0, 1, 0),  size, Vector(0, 0, -1), center + Vector(0, size / 2, 0));
+		faces[3] = new PlaneMesh(Vector(0, -1, 0), size, Vector(0, 1, -1), center + Vector(0, -size / 2, 0));
+		faces[4] = new PlaneMesh(Vector(0, 0, 1),  size, Vector(0, 1, 0),  center + Vector(0, 0, size / 2));
+		faces[5] = new PlaneMesh(Vector(0, 0, -1), size, Vector(0, 1, 0),  center + Vector(0, 0, -size / 2));
 
 
 	};
@@ -32,7 +32,7 @@ public:
 	};
 
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
-	Vec3 center;
+	Vector center;
 	float size;
 	Mesh *faces[6];
 };
