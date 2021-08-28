@@ -21,9 +21,18 @@ int ConfigHandler::loadConfigValues()
     if (cFile.is_open())
     {
         string line;
+        int i = 0;
         while(getline(cFile, line))
         {
+            if (line.empty() || line[0] == "#")
+            {
+                continue;
+            }
+
+            auto delimiterPos = line.find("=");
             
+
+            i++;
         }
     } else 
     {
