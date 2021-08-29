@@ -160,7 +160,6 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 				//gets a ray from the camera starting
 				//at the cameras position and going through point u,v
 				ray r = cam->get_ray(u, v);
-
 				//get the color value for the given ray
 
 				col += color(r, 0);

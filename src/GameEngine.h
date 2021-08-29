@@ -69,38 +69,24 @@ void GameEngine::startGame()
 	world = new World();
 	world->cam->samples = SAMPLE_COUNT;
 
-
 	//add a ground plane and a metal sphere
 	//just to test
 
 
 
 
-	world->addObject(new Item(Vector(0, 0, 0), new PlaneMesh(Vector(0, 1, 0), 5, Vector(0, 0, -1)), new Lambertian(Vector(0.6, 0.8, 0.0))));
+	//world->addObject(new Item(Vector(0, 0, 0), new PlaneMesh(Vector(0, 1, 0), 5, Vector(0, 0, -1)), new Lambertian(Vector(0.6, 0.8, 0.0))));
 	
 
-	Item* cube = new Item(Vector(0, 0.5, 0), new CubeMesh(), new Lambertian(Vector(0.8, 0.1, 0.2)));
+	Item* cube = new Item(Vector(1, 0.5, 1), new CubeMesh(), new Lambertian(Vector(0.8, 0.1, 0.2)));
 	cube->transform.scale = Vector(0.5, 0.5, 0.5);
 	world->addObject(cube);
 	
-	Item* sphere = new Item(Vector(1, 0.5, 5), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.3));
-	sphere->transform.scale = Vector(0,3,0);
+	Item* sphere = new Item(Vector(0,0,0, 1), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.3));
 	world->addObject(sphere);
 	//*/
 
-	
-
-/*	//add the liminal volumes
-	LiminalVolume* vol_plane1 = new LiminalVolume(Vector(0, 0.5, -1.5), new PlaneMesh(Vector(0,0,-1)), Vector(1,1,0.3));
-	vol_plane1->transform.scale = Vector(1, 1, 1);
-	world->lw->addVolume(vol_plane1);
-
-	LiminalVolume* vol_plane2 = new LiminalVolume(Vector(0, 0.5, 1.5), new PlaneMesh(Vector(0,0,1)), Vector(1, 1, 0.3));
-	vol_plane2->transform.scale = Vector(1, 1, 1);
-	world->lw->addVolume(vol_plane2);
-*/
-
-
+/*
 	Item* wall1 = new Item(Vector(-0.5, 0.5, 0), new PlaneMesh(Vector(-1,0,0)), new Lambertian(Vector(0.1, 0.1, 0.8)));
 	wall1->transform.scale = Vector(1, 1, 3);
 	world->addObject(wall1);
@@ -112,7 +98,7 @@ void GameEngine::startGame()
 	Item* wall3 = new Item(Vector(0, 1, 0), new PlaneMesh(Vector(0,1,0), 1, Vector(0,0,1)), new Lambertian(Vector(0.1, 0.1, 0.8)));
 	wall3->transform.scale = Vector(1, 1, 3);
 	world->addObject(wall3);
-
+*/
 
 
 
@@ -157,10 +143,13 @@ void GameEngine::gameLoop()
 			cameraAngle = cameraAngle + 5;
 
 			//update the camera position
-			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
-			world->cam->transform.rotation = Vector(0, cameraAngle, 0);
-
-
+			/* spinning camera
+			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0.6, cos(cameraAngle * DEG2RAD) * c_dist);
+			world->cam->transform.rotation[0] = Vector(0, -cameraAngle, 0);
+			world->cam->transform.rotation[1] = Vector(0,0,45);
+			*/
+			world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
+			world->cam->transform.rotation[1] = Vector(0,0,45);
 			//if the thread is still alive,
 			//join it back
 			if(renderThread != nullptr)

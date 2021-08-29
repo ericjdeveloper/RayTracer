@@ -7,7 +7,7 @@
 class Vector {
 public:
 	Vector() {}
-	Vector(float e0, float e1, float e2, float e3 = 0.0) { e[0] = e0; e[1] = e1; e[2] = e2; e[3] = e3;}
+	Vector(float e0, float e1, float e2 = 0.0, float e3 = 0.0) { e[0] = e0; e[1] = e1; e[2] = e2; e[3] = e3;}
     inline float w() const { return e[3]; }
 	inline float x() const { return e[0]; }
 	inline float y() const { return e[1]; }

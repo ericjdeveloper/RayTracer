@@ -26,7 +26,7 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 	
 	Vector globalCenter = transform->applyTransform(center, true);
 	float radius = diameter / 2;
-	float scaledRadius = radius;/// transform->scale.length();
+	float scaledRadius = radius; // transform->scale.length();
 
 	Vector oc = r.origin() - globalCenter;
 	float a = dot(r.direction(), r.direction());

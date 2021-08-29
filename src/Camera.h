@@ -10,7 +10,7 @@ public:
 	//samples count
 	//and max_bounces
 	Camera(Vector pos): Entity(pos) {
-		viewport_plane = Vector(4.0, 2.0, 2.0, 0.0);
+		viewport_plane = Vector(4.0, 2.0, 2.0);
 		samples = 50;
 		max_bounces = 10;
 	}
@@ -19,8 +19,12 @@ public:
 	//(0-1 on each dimension)
 	ray get_ray(float u, float v) { 
 		return ray(transform.position,
-					unit_vector(transform.applyTransform(Vector(-viewport_plane.x() /2, -viewport_plane.y() /2, viewport_plane.z(), 0) + Vector(viewport_plane.x() * u,viewport_plane.y() * v, 0, 0)))
-		);
+					unit_vector(transform.applyTransform(
+						Vector(-viewport_plane.x() /2, -viewport_plane.y() /2, viewport_plane.z(), viewport_plane.w()) + 
+						Vector(viewport_plane.x() * u,viewport_plane.y() * v)
+						)
+					)
+				);
 	}
 
 	//the plane width, height, and distance from origin
