@@ -30,7 +30,7 @@ void PPMRenderer::renderWindow(ScreenData* sd)
 	float scale_x = (float)sd->getWidth()  / width;
 	float scale_y = (float)sd->getHeight() / height;
 	std::ofstream imgFile;
-	imgFile.open("C:\\Users\\Eric\\source\\repos\\RayTracer\\RayTracer\\frames\\f" + std::to_string(fn) + ".ppm");
+	imgFile.open("frames\\f" + std::to_string(fn) + ".ppm");
 
 	imgFile << "P3\n" << width << " " << height << "\n255\n";
 	for (int y = height - 1; y >= 0; y--)
