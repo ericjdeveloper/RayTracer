@@ -12,6 +12,8 @@ public:
 	//override for the hit call
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 
+	Vector getUVCoordinate(Vector hitPoint) const;
+
 	//data for center, radius, and material;
 	Vector center;
 	float diameter;
@@ -44,6 +46,9 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - globalCenter) / scaledRadius;
+			Vector uv = getUVCoordinate(rec.p);
+			rec.UV_x = uv.x();
+			rec.UV_y = uv.y();
 			return true;
 		}
 
@@ -53,9 +58,21 @@ bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) co
 			rec.t = temp;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - globalCenter) / scaledRadius;
+			Vector uv = getUVCoordinate(rec.p);
+			rec.UV_x = uv.x();
+			rec.UV_y = uv.y();
 			return true;
 		}
 	}
 	
 	return false;
+}
+
+Vector SphereMesh::getUVCoordinate(Vector hitPoint) const
+{
+		Vector localized = hitPoint - center;
+		Vector right = transform->applyTransform(Vector(-1,0,0) * diameter);
+		Vector down = transform->applyTransform(Vector(0,-1,0) * diameter);
+		float Angle = acos(dot(localized, right)) / 2;
+		return Vector(Angle, dot(localized, down) + 0.5f,0);
 }

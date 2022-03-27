@@ -11,8 +11,8 @@ public:
 
 	//override
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	Vector getUVCoordinate(Vector hitPoint) const;
 
-	
 	Vector center;
 	float width;
 	Vector facing;
@@ -66,7 +66,9 @@ bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) con
 				rec.normal = unit_vector(tfmFacing);
 				rec.t = temp;
 				rec.p = p;
-
+				Vector uv_coords = getUVCoordinate(p);
+				rec.UV_x = uv_coords.x();
+				rec.UV_y = uv_coords.y();
 				return true;
 			}
 			
@@ -75,4 +77,19 @@ bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) con
 	}
 
 	return false;
+}
+
+
+Vector PlaneMesh::getUVCoordinate(Vector hitPoint) const
+{
+	Vector down = transform->applyTransform(-up);
+	Vector left = cross(down,transform->applyTransform(facing));
+	Vector delta = hitPoint - transform->applyTransform(center, true);
+
+	float xlength = dot(left, delta);
+	float ylength = dot(down, delta);
+	Vector uvCoord = Vector( (xlength / width) + 0.5f,(ylength / width) + 0.5f ,0);
+
+
+	return uvCoord;
 }

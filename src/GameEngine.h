@@ -17,6 +17,7 @@ using namespace std;
 #include "Materials\Material.h"
 #include "Materials\Lambertian.h"
 #include "Materials\Metal.h"
+#include "Materials\UVMap.h"
 
 #define SAMPLE_COUNT 5
 
@@ -32,6 +33,8 @@ public:
 	void render();
 
 	bool isRendering = false;
+
+	Item* testItem;
 private:
 	//the main loop of the game
 	void gameLoop();
@@ -68,20 +71,21 @@ void GameEngine::startGame()
 	//create the world
 	world = new World();
 	world->cam->samples = SAMPLE_COUNT;
-
 	//add a ground plane and a metal sphere
 	//just to test
 
-
+	world->cam->transform.position = Vector(0, 0, -3);
 
 
 	//world->addObject(new Item(Vector(0, 0, 0), new PlaneMesh(Vector(0, 1, 0), 5, Vector(0, 0, -1)), new Lambertian(Vector(0.6, 0.8, 0.0))));
 	
 
-	Item* cube = new Item(Vector(1, 0.5, 1), new CubeMesh(), new Lambertian(Vector(0.8, 0.1, 0.2)));
-	cube->transform.scale = Vector(0.5, 0.5, 0.5);
+	Item* cube = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample_1.ppm"));
+	testItem = cube;
+	cube->transform.scale = Vector(1,1,1);
 	world->addObject(cube);
 	
+	/*
 	Item* sphere = new Item(Vector(0,0,0, 1), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.3));
 	world->addObject(sphere);
 	//*/
@@ -117,6 +121,8 @@ void GameEngine::gameLoop()
 	//flag to determine whether to exit the program
 	bool exitFlag = false;
 
+	int fCount = 0;
+
 	//main game loop
 	while (!exitFlag) {
 
@@ -139,17 +145,25 @@ void GameEngine::gameLoop()
 		//update the world
 		if(!isRendering)
 		{
-			//spin the camera
-			cameraAngle = cameraAngle + 5;
+
+
 
 			//update the camera position
-			/* spinning camera
-			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0.6, cos(cameraAngle * DEG2RAD) * c_dist);
+
+			/*
+			//spinning camera
+			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0, cos(cameraAngle * DEG2RAD) * c_dist);
 			world->cam->transform.rotation[0] = Vector(0, -cameraAngle, 0);
-			world->cam->transform.rotation[1] = Vector(0,0,45);
-			*/
-			world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
-			world->cam->transform.rotation[1] = Vector(0,0,45);
+			//world->cam->transform.rotation[1] = Vector(0,0,45);
+			//*/
+
+			//world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
+			//world->cam->transform.rotation[1] = Vector(0,0,45);
+
+
+			 testItem->transform.rotation[0] = Vector(cameraAngle,cameraAngle,0);
+
+
 			//if the thread is still alive,
 			//join it back
 			if(renderThread != nullptr)
@@ -159,6 +173,16 @@ void GameEngine::gameLoop()
 			//and create a new thread
 			isRendering = true;
 			renderThread = new thread(GameEngine::render, this); 
+/*
+			if(fCount == 360 / 5)
+			{
+				exitFlag = true;
+				break;
+			}
+//*/
+			//spin the camera
+			cameraAngle = cameraAngle + 5;
+			fCount++;
 		}
 
 	}

@@ -263,7 +263,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/RayTracer/frames
+/frames
 RayTracer.exe
 .vscode/c_cpp_properties.json
 .vscode/launch.json

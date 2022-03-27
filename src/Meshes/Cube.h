@@ -14,7 +14,7 @@ public:
 		faces[0] = new PlaneMesh(Vector(1, 0, 0),  size, Vector(0, 1, 0),  center + Vector(size / 2, 0, 0));
 		faces[1] = new PlaneMesh(Vector(-1, 0, 0), size, Vector(0, 1, 0),  center + Vector(-size / 2, 0, 0));
 		faces[2] = new PlaneMesh(Vector(0, 1, 0),  size, Vector(0, 0, -1), center + Vector(0, size / 2, 0));
-		faces[3] = new PlaneMesh(Vector(0, -1, 0), size, Vector(0, 1, -1), center + Vector(0, -size / 2, 0));
+		faces[3] = new PlaneMesh(Vector(0, -1, 0), size, Vector(0, 0, -1), center + Vector(0, -size / 2, 0));
 		faces[4] = new PlaneMesh(Vector(0, 0, 1),  size, Vector(0, 1, 0),  center + Vector(0, 0, size / 2));
 		faces[5] = new PlaneMesh(Vector(0, 0, -1), size, Vector(0, 1, 0),  center + Vector(0, 0, -size / 2));
 
@@ -32,6 +32,7 @@ public:
 	};
 
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	Vector getUVCoordinate(Vector hitPoint) const;
 	Vector center;
 	float size;
 	Mesh *faces[6];
@@ -51,10 +52,15 @@ bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
 		if (faces[i]->hit(r, t_min, closest_so_far, temp_rec)) {
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
-			rec = temp_rec;
+			rec = temp_rec;			
 		}
 	}
 
 	return hit_anything;
+}
+
+Vector CubeMesh::getUVCoordinate(Vector hitPoint) const
+{
+	return Vector(0,0,0);
 }
 

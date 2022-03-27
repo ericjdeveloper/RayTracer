@@ -47,7 +47,7 @@ bool WorldSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth,
 
 	//if the number of bounces is under the threshold
 	//and the scatter results in another hit
-	if (depth > 0 && rec.mat_ptr->scatter(r, rec.p, rec.normal, attenuation, scattered)) {
+	if (depth > 0 && rec.mat_ptr->scatter(r, rec.p, rec.normal, rec.UV_x, rec.UV_y, attenuation, scattered)) {
 		//return the color of the scattered ray
 		int newDepth = depth - 1;
 
