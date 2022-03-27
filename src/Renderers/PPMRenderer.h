@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Renderer.h"
-#include "Vec3.h"
+#include "Vector.h"
 
 class PPMRenderer : public Renderer {
 public:	
@@ -27,10 +27,10 @@ PPMRenderer::PPMRenderer(int w, int h)
 
 void PPMRenderer::renderWindow(ScreenData* sd)
 {
-	float scale_x = sd->getWidth()  / width;
-	float scale_y = sd->getHeight() / height;
+	float scale_x = (float)sd->getWidth()  / width;
+	float scale_y = (float)sd->getHeight() / height;
 	std::ofstream imgFile;
-	imgFile.open("frames/f" + std::to_string(fn) + ".ppm");
+	imgFile.open("frames\\f" + std::to_string(fn) + ".ppm");
 
 	imgFile << "P3\n" << width << " " << height << "\n255\n";
 	for (int y = height - 1; y >= 0; y--)
@@ -47,6 +47,7 @@ void PPMRenderer::renderWindow(ScreenData* sd)
 		}
 	}
 	imgFile.close();
+	fn++;
 }
 
 

@@ -17,8 +17,9 @@ using namespace std;
 #include "Materials\Material.h"
 #include "Materials\Lambertian.h"
 #include "Materials\Metal.h"
+#include "Materials\UVMap.h"
 
-#define SAMPLE_COUNT 20
+#define SAMPLE_COUNT 5
 
 //handles the various modules that have to do with
 //the environment, as well as handles the driving
@@ -32,6 +33,8 @@ public:
 	void render();
 
 	bool isRendering = false;
+
+	Item* testItem;
 private:
 	//the main loop of the game
 	void gameLoop();
@@ -68,51 +71,38 @@ void GameEngine::startGame()
 	//create the world
 	world = new World();
 	world->cam->samples = SAMPLE_COUNT;
-
-
 	//add a ground plane and a metal sphere
 	//just to test
 
+	world->cam->transform.position = Vector(0, 0, -3);
 
 
-
-	world->addObject(new Item(Vec3(0, 0, 0), new PlaneMesh(Vec3(0, 1, 0), 5, Vec3(0, 0, -1)), new Lambertian(Vec3(0.6, 0.8, 0.0))));
+	//world->addObject(new Item(Vector(0, 0, 0), new PlaneMesh(Vector(0, 1, 0), 5, Vector(0, 0, -1)), new Lambertian(Vector(0.6, 0.8, 0.0))));
 	
 
-	Item* cube = new Item(Vec3(0, 0.5, 0), new CubeMesh(), new Lambertian(Vec3(0.8, 0.1, 0.2)));
-	cube->transform.scale = Vec3(0.5, 0.5, 0.5);
+	Item* cube = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample_1.ppm"));
+	testItem = cube;
+	cube->transform.scale = Vector(1,1,1);
 	world->addObject(cube);
 	
-	Item* sphere = new Item(Vec3(1, 0.5, 5), new SphereMesh(), new Metal(Vec3(0.3, 0.5, 0.1), 0.3));
-	sphere->transform.scale = Vec3(0,3,0);
+	/*
+	Item* sphere = new Item(Vector(0,0,0, 1), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.3));
 	world->addObject(sphere);
 	//*/
 
-	
-
-/*	//add the liminal volumes
-	LiminalVolume* vol_plane1 = new LiminalVolume(Vec3(0, 0.5, -1.5), new PlaneMesh(Vec3(0,0,-1)), Vec3(1,1,0.3));
-	vol_plane1->transform.scale = Vec3(1, 1, 1);
-	world->lw->addVolume(vol_plane1);
-
-	LiminalVolume* vol_plane2 = new LiminalVolume(Vec3(0, 0.5, 1.5), new PlaneMesh(Vec3(0,0,1)), Vec3(1, 1, 0.3));
-	vol_plane2->transform.scale = Vec3(1, 1, 1);
-	world->lw->addVolume(vol_plane2);
-*/
-
-
-	Item* wall1 = new Item(Vec3(-0.5, 0.5, 0), new PlaneMesh(Vec3(-1,0,0)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
-	wall1->transform.scale = Vec3(1, 1, 3);
+/*
+	Item* wall1 = new Item(Vector(-0.5, 0.5, 0), new PlaneMesh(Vector(-1,0,0)), new Lambertian(Vector(0.1, 0.1, 0.8)));
+	wall1->transform.scale = Vector(1, 1, 3);
 	world->addObject(wall1);
 
-	Item* wall2 = new Item(Vec3(0.5, 0.5, 0), new PlaneMesh(Vec3(1,0,0)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
-	wall2->transform.scale = Vec3(1, 1, 3);
+	Item* wall2 = new Item(Vector(0.5, 0.5, 0), new PlaneMesh(Vector(1,0,0)), new Lambertian(Vector(0.1, 0.1, 0.8)));
+	wall2->transform.scale = Vector(1, 1, 3);
 	world->addObject(wall2);
 
-	Item* wall3 = new Item(Vec3(0, 1, 0), new PlaneMesh(Vec3(0,1,0), 1, Vec3(0,0,1)), new Lambertian(Vec3(0.1, 0.1, 0.8)));
-	wall3->transform.scale = Vec3(1, 1, 3);
+	Item* wall3 = new Item(Vector(0, 1, 0), new PlaneMesh(Vector(0,1,0), 1, Vector(0,0,1)), new Lambertian(Vector(0.1, 0.1, 0.8)));
+	wall3->transform.scale = Vector(1, 1, 3);
 	world->addObject(wall3);
-
+*/
 
 
 
@@ -130,6 +120,8 @@ void GameEngine::gameLoop()
 
 	//flag to determine whether to exit the program
 	bool exitFlag = false;
+
+	int fCount = 0;
 
 	//main game loop
 	while (!exitFlag) {
@@ -153,12 +145,23 @@ void GameEngine::gameLoop()
 		//update the world
 		if(!isRendering)
 		{
-			//spin the camera
-			cameraAngle = cameraAngle + 5;
+
+
 
 			//update the camera position
-			world->cam->transform.position = Vec3(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
-			world->cam->transform.rotation = Vec3(0, cameraAngle, 0);
+
+			/*
+			//spinning camera
+			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0, cos(cameraAngle * DEG2RAD) * c_dist);
+			world->cam->transform.rotation[0] = Vector(0, -cameraAngle, 0);
+			//world->cam->transform.rotation[1] = Vector(0,0,45);
+			//*/
+
+			//world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
+			//world->cam->transform.rotation[1] = Vector(0,0,45);
+
+
+			 testItem->transform.rotation[0] = Vector(cameraAngle,cameraAngle,0);
 
 
 			//if the thread is still alive,
@@ -170,6 +173,16 @@ void GameEngine::gameLoop()
 			//and create a new thread
 			isRendering = true;
 			renderThread = new thread(GameEngine::render, this); 
+/*
+			if(fCount == 360 / 5)
+			{
+				exitFlag = true;
+				break;
+			}
+//*/
+			//spin the camera
+			cameraAngle = cameraAngle + 5;
+			fCount++;
 		}
 
 	}

@@ -9,7 +9,7 @@
 //represents the "normal" world objects
 class Item : public Entity {
 public:
-	Item(Vec3 pos, Mesh *m, Material *mat) : mesh(m), Entity(pos), material(mat) {
+	Item(Vector pos, Mesh *m, Material *mat) : mesh(m), Entity(pos), material(mat) {
 		m->setTransform(&transform);
 	};
 

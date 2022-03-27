@@ -8,3 +8,4 @@ class Renderer {
 public:
 	virtual void renderWindow(ScreenData* sd) =0;
 };
+
