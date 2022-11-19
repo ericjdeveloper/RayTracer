@@ -1,7 +1,7 @@
 #pragma once
 
 #include <thread>
-
+#include <functional>
 
 #include "ScreenData.h"
 #include "Item.h"
@@ -79,18 +79,12 @@ Vector World::random_in_unit_sphere() {
 //gets the color value for a given ray
 Vector World::color(const ray& r, int depth) {
 
-
-
 	//create color variable
 	Vector col = Vector(0, 0, 0);
 
 	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
-	{
-		//background color
-		Vector unit_direction = unit_vector(r.direction());
-		float t = 0.5*(unit_direction.y() + 1.0);
-		
-		col = (1.0f - t)*Vector(1, 1, 1) + t * Vector(0.5f, 0.7f, 1.0f);;//Vector(0.0f, .28f, .98f);
+	{			
+		col = ws->getEnvironmentColor(r.direction());	
 	}
 
 
@@ -132,6 +126,7 @@ void World::render(ScreenData* output)
 
 void World::renderSection(ScreenData* output, float x, float y, float w, float h)
 {
+	hash<int> sample_hasher;
 	//get the number of pixels to output
 	int width = output->getWidth();
 	int height = output->getHeight();
@@ -148,6 +143,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 			//repeat this for each sample
 			for (int s = 0; s < cam->samples; s++) {
 
+				//srand(j * (height * cam->samples) + i * cam->samples + s);
 				//get a random x and y value within the pixel
 				float randx = ((double)rand() / (RAND_MAX + 1));
 				float randy = ((double)rand() / (RAND_MAX + 1));

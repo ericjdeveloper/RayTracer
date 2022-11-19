@@ -8,34 +8,17 @@
 //cube override for the mesh
 class CubeMesh : public Mesh {
 public:
-	CubeMesh(float s=1, Vector cen = Vector(0,0,0)) : center(cen), size(s){
-		
-		//create a new plane for each face
-		faces[0] = new PlaneMesh(Vector(1, 0, 0),  size, Vector(0, 1, 0),  center + Vector(size / 2, 0, 0));
-		faces[1] = new PlaneMesh(Vector(-1, 0, 0), size, Vector(0, 1, 0),  center + Vector(-size / 2, 0, 0));
-		faces[2] = new PlaneMesh(Vector(0, 1, 0),  size, Vector(0, 0, -1), center + Vector(0, size / 2, 0));
-		faces[3] = new PlaneMesh(Vector(0, -1, 0), size, Vector(0, 0, -1), center + Vector(0, -size / 2, 0));
-		faces[4] = new PlaneMesh(Vector(0, 0, 1),  size, Vector(0, 1, 0),  center + Vector(0, 0, size / 2));
-		faces[5] = new PlaneMesh(Vector(0, 0, -1), size, Vector(0, 1, 0),  center + Vector(0, 0, -size / 2));
+	CubeMesh(float s=1, Vector cen = Vector(0,0,0)) : center(cen), size(s){};
 
 
-	};
 	void setTransform(Transform *tfm) {
 		transform = tfm;
-
-		faces[0]->setTransform(transform);
-		faces[1]->setTransform(transform);
-		faces[2]->setTransform(transform);
-		faces[3]->setTransform(transform);
-		faces[4]->setTransform(transform);
-		faces[5]->setTransform(transform);
 	};
 
 	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 	Vector getUVCoordinate(Vector hitPoint) const;
 	Vector center;
 	float size;
-	Mesh *faces[6];
 };
 
 //cube override
@@ -45,16 +28,11 @@ bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
 	//just loop through all the faces
 	//and calculate
 	bool hit_anything = false;
-	double closest_so_far = t_max;
-	for (int i = 0; i < 6; i++)
-	{
-		
-		if (faces[i]->hit(r, t_min, closest_so_far, temp_rec)) {
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			rec = temp_rec;			
-		}
-	}
+
+	Vector origin = transform->applyTransform(r.origin(), true);
+	Vector local_ray = transform->applyTransform(r.direction());
+
+	
 
 	return hit_anything;
 }
