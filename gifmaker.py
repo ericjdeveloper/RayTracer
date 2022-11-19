@@ -1,11 +1,13 @@
 import glob
 from PIL import Image
 from wand.image import Image as WImage
-import numpy as np
-import time
+import os
 
 filelist = glob.glob('frames/*.ppm')
 f_count = 0
+
+if not os.path.exists('jpeg/'):
+    os.mkdir('jpeg/')
 
 for fname in filelist:
     img = WImage(filename=fname)
@@ -18,4 +20,4 @@ images = []
 for i in range(f_count):
  images.append((Image.open('jpeg/f'+ str(i) + '.jpg')))
 
-images[0].save('output.mp4', save_all=True, append_images=images[1:], optimize=False, duration=40, loop=0)
+images[0].save('output.gif', save_all=True, append_images=images[1:], optimize=False, duration=40, loop=0)
