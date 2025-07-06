@@ -187,7 +187,8 @@ void GameEngine::gameLoop()
 			//and create a new thread
 			isRendering = true;
 			renderThread = new thread(GameEngine::render, this); 
-
+			this_thread::sleep_for(33ms);
+/*
 			if(fCount == 360 / 5)
 			{
 				exitFlag = true;

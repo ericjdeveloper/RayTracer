@@ -16,8 +16,8 @@
 //creates and launges the game engine
 int main(int argc, char* argv[])
 {
-	int width = 1200;
-	int height = 600;
+	int width = 800;
+	int height = 400;
 	int scale = 2;
 
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		rend = new TerminalRenderer(width * scale, height * scale);
+		rend = new SDLWindowRenderer(width * scale, height * scale);
 	}
 
 
