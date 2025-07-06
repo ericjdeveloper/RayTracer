@@ -1,8 +1,9 @@
 #pragma once
 
 
-#include "SDL2/SDL.h"
-#include "ScreenData.h"
+#include "SDL3/SDL.h"
+#include "../ScreenData.h"
+#include "../Vector.h"
 
 class Renderer {
 public:

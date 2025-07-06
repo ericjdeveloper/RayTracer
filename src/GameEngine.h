@@ -94,9 +94,9 @@ void GameEngine::startGame()
 	light->transform.rotation[0] = Vector(45, 0, 0);
 	world->addObject(light);
 
-	Item* cubemap = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample.ppm"));
-	testItem = cubemap;
-	cubemap->transform.scale = Vector(10,10,10);
+	// Item* cubemap = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample.ppm"));
+	// testItem = cubemap;
+	// cubemap->transform.scale = Vector(10,10,10);
 	//world->addObject(cubemap);
 	
 	/*
@@ -150,7 +150,7 @@ void GameEngine::gameLoop()
 			switch (e.type)
 			{
 			//if the x button is pressed, closed the application
-			case SDL_QUIT: exitFlag = true; break;
+			case SDL_EVENT_QUIT: exitFlag = true; break;
 
 			}
 		}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Material.h"
-#include "ScreenData.h"
+#include "..\ScreenData.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

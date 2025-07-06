@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Vector.h"
-#include "Item.h"
+#include "..\Vector.h"
+#include "..\Item.h"
 
 class WorldSpace {
 

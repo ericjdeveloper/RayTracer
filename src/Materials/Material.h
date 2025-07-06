@@ -1,5 +1,5 @@
 #pragma once
-#include "ray.h"
+#include "..\ray.h"
 class Material {
 public:
 	virtual bool scatter(const ray& r_in, Vector& p, Vector& normal, float UV_x, float UV_y, Vector& attenuation, ray& scattered) const = 0;

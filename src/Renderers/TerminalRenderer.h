@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "Renderer.h"
-#include "Vector.h"
+#include "../Vector.h"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ TerminalRenderer::TerminalRenderer(int w, int h)
 void TerminalRenderer::renderWindow(ScreenData* sd)
 {
 	cout << "flushing." << flush;
-	system("CLS");
+	cout << "\r";
 
 
 	float scale_x = sd->getWidth() / width;

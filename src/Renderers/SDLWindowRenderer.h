@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Renderer.h"
-#include "Vector.h"
+#include "../Vector.h"
 
 //class for handling the output of the render
 class SDLWindowRenderer : public Renderer{
@@ -29,9 +29,8 @@ SDLWindowRenderer::SDLWindowRenderer(int w, int h)
 	height = h;
 
 	//SDL window creation
-	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("Raytracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN);
-	renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_CreateWindowAndRenderer("Raytracer", w, h, 0, &window, &renderer);
 
 }
 
@@ -60,13 +59,12 @@ void SDLWindowRenderer::renderWindow(ScreenData* sd)
 			Uint8 b;
 
 			sd->getPixel(screen_x, screen_y, r, g, b);
-			
 			//set the render color
 			SDL_SetRenderDrawColor(renderer, r, g, b, 1);
 
 
 			//draw the current pixel with the color described
-			SDL_RenderDrawPoint(renderer, x, height-y);
+			SDL_RenderPoint(renderer, x, height-y);
 
 		}
 	}
