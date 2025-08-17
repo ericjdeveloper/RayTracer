@@ -64,8 +64,8 @@ public:
 		Vector target = p + normal + random_in_unit_sphere();
 		scattered = ray(p, target - p);
 		
-		if(UV_x > 0.5f && UV_x < 0.75f)
-			std::cout << "wait";
+		// if(UV_x > 0.5f && UV_x < 0.75f)
+		// 	std::cout << "wait";
 
 		UV_x = min(max(0.0f, UV_x), 1.0f);
 		UV_y = min(max(0.0f, UV_y), 1.0f);

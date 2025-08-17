@@ -30,7 +30,7 @@ public:
 	inline Vector& operator/=(const float t);
 
 	inline float length() const {
-		return sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2] + e[3] * e[3]);
+		return sqrt(squared_length());
 	}
 
 	inline float squared_length() const {

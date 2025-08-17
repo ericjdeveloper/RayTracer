@@ -9,12 +9,13 @@ using namespace std;
 #include "Renderers\\Renderer.h"
 #include "World.h"
 
-#include "Meshes\\Mesh.h"
-#include "Meshes\\Sphere.h"
-#include "Meshes\\Cube.h"
-#include "Meshes\\Plane.h"
+#include "Meshes\Mesh.h"
+#include "Meshes\Sphere.h"
+#include "Meshes\Cube.h"
+#include "Meshes\Plane.h"
 
 #include "Materials\Material.h"
+#include "Materials\Normal.h"
 #include "Materials\Lambertian.h"
 #include "Materials\Luminous.h"
 #include "Materials\Metal.h"
@@ -84,11 +85,16 @@ void GameEngine::startGame()
 	Item* floor = new Item(Vector(0,-0.5,0), new PlaneMesh(Vector(0,1,0), 5, Vector(0,0, -1)), new Metal(Vector(0.1,0.1,0.1), 0.1f));
 	world->addObject(floor);
 
-	world->addObject(new Item(Vector(1,0,1), new CubeMesh(), new Lambertian(Vector(0.6,0.3,0.8))));
+	//world->addObject(new Item(Vector(1,0,1), new CubeMesh(), new Lambertian(Vector(0.6,0.3,0.8))));
 	
-	Item* sphere = new Item(Vector(0, 0, 0), new SphereMesh(), new Lambertian(Vector(0.3,0.5,0.1))); //
+	//Item* sphere = new Item(Vector(2, 0, 0), new SphereMesh(), new UVMap("sample.ppm")); //
+	Item* sphere = new Item(Vector(-2, 0, 0), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.1f));
 	sphere->transform.scale = Vector(1,1,1);
 	world->addObject(sphere);
+	testItem = sphere;
+
+	Item* cube = new Item(Vector(-1,1,-1), new CubeMesh(0.75), new Lambertian(Vector(0.6,0.3,0.8)));
+	world->addObject(cube);
 	
 	Item* light = new Item(Vector(0, 1, 1), new PlaneMesh(Vector(0, 1, 0), 1, Vector(0,0,-1)), new Luminous(Vector(1, 1, 1)));
 	light->transform.rotation[0] = Vector(45, 0, 0);
@@ -97,7 +103,7 @@ void GameEngine::startGame()
 	// Item* cubemap = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample.ppm"));
 	// testItem = cubemap;
 	// cubemap->transform.scale = Vector(10,10,10);
-	//world->addObject(cubemap);
+	// world->addObject(cubemap);
 	
 	/*
 	Item* sphere = new Item(Vector(0,0,0, 1), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.3));
@@ -173,7 +179,7 @@ void GameEngine::gameLoop()
 
 			//world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
 			//world->cam->transform.rotation[1] = Vector(0,0,45);
-
+			//testItem->transform.position = Vector(0, 0, 0, sin(cameraAngle * DEG2RAD));
 
 			//testItem->transform.rotation[0] = Vector(cameraAngle,cameraAngle,0);			
 
