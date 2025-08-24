@@ -10,7 +10,7 @@ public:
 	SphereMesh(float d=1, Vector cen = Vector(0,0,0,0)) : center(cen), diameter(d) {};
 
 	//override for the hit call
-	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
 
 	Vector getUVCoordinate(Vector hitPoint) const;
 
@@ -20,7 +20,7 @@ public:
 };
 
 //override of hit function for the sphere
-bool SphereMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
+bool SphereMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
 
 	//the reasoning for the math is based on the "Ray Tracing In a Weekend" article,
 	//but the quick explanation is that the intersection of a line can be determined by

@@ -13,13 +13,13 @@ public:
 		m->setTransform(&transform);
 	};
 
-	bool hit(const ray& r, float t_min, float t_max, hit_record& rec);
+	bool hit(const Ray& r, float t_min, float t_max, hit_record& rec);
 
 	Material *material;
 	Mesh *mesh;
 };
 
-bool Item::hit(const ray& r, float t_min, float t_max, hit_record& rec)
+bool Item::hit(const Ray& r, float t_min, float t_max, hit_record& rec)
 {
 	
 	if(mesh->hit(r, t_min, t_max, rec))

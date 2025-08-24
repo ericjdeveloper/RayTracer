@@ -15,14 +15,14 @@ public:
 		transform = tfm;
 	};
 
-	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
 	Vector getUVCoordinate(Vector hitPoint) const;
 	Vector center;
 	float size;
 };
 
 //cube override
-bool CubeMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
+bool CubeMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
 
 	//just loop through all the faces
 	//and calculate

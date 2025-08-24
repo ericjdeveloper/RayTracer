@@ -1,8 +1,8 @@
 #pragma once
-#include "..\ray.h"
+#include "..\Ray.h"
 class Material {
 public:
-	virtual bool scatter(const ray& r_in, Vector& p, Vector& normal, float UV_x, float UV_y, Vector& attenuation, ray& scattered) const = 0;
+	virtual bool scatter(const Ray& r_in, Vector& p, Vector& normal, float UV_x, float UV_y, Vector& attenuation, Ray& scattered) const = 0;
 
 protected:
 	inline Vector random_in_unit_sphere() const {

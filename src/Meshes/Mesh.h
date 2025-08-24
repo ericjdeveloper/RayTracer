@@ -19,7 +19,7 @@ struct hit_record {
 
 class Mesh {
 public:
-	virtual bool hit(const ray&r, float t_min, float t_max, hit_record& rec) const = 0;
+	virtual bool hit(const Ray&r, float t_min, float t_max, hit_record& rec) const = 0;
 	virtual void setTransform(Transform * tfm) { transform = tfm; }
 	virtual Vector getUVCoordinate(Vector hitPoint) const {return Vector(0,0,0);};
 

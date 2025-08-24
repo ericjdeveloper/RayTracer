@@ -38,7 +38,7 @@ private:
 	int item_count = 0;
 
 	//function for obtaining the color of the given ray
-	Vector color(const ray&, int depth);
+	Vector color(const Ray&, int depth);
 
 	//function for getting a random point within a unit sphere
 	Vector random_in_unit_sphere();
@@ -77,7 +77,7 @@ Vector World::random_in_unit_sphere() {
 }
 
 //gets the color value for a given ray
-Vector World::color(const ray& r, int depth) {
+Vector World::color(const Ray& r, int depth) {
 
 	//create color variable
 	Vector col = Vector(0, 0, 0);
@@ -155,7 +155,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 
 				//gets a ray from the camera starting
 				//at the cameras position and going through point u,v
-				ray r = cam->get_ray(u, v);
+				Ray r = cam->get_ray(u, v);
 				//get the color value for the given ray
 
 				col += color(r, 0);

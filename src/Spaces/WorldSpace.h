@@ -6,13 +6,13 @@
 class WorldSpace {
 
 public:
-	bool getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& color);
+	bool getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& color);
 	Vector getEnvironmentColor(Vector coord);
 private:
-	virtual bool getHit(const ray& r, Item *wrld_obs, float min_dist, float max_dist, hit_record& rec) =0;
+	virtual bool getHit(const Ray& r, Item *wrld_obs, float min_dist, float max_dist, hit_record& rec) =0;
 };
 
-bool WorldSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& col)
+bool WorldSpace::getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& col)
 {
 	if(depth == 0)	
 		return false;	
@@ -43,9 +43,8 @@ bool WorldSpace::getColor(const ray& r, Item **wrld_obs, int itm_cnt, int depth,
 		return false;
 	}
 
-
 	//create a new reflection ray
-	ray scattered;
+	Ray scattered;
 	Vector attenuation;
 
 	//if the number of bounces is under the threshold

@@ -10,7 +10,7 @@ public:
 	PlaneMesh(Vector f=Vector(0,0,-1), float w=1, Vector u = Vector(0,1,0), Vector cen = Vector(0, 0, 0)) : center(cen), width(w), facing(f), up(u){};
 
 	//override
-	bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
 	Vector getUVCoordinate(Vector hitPoint) const;
 
 	Vector center;
@@ -20,7 +20,7 @@ public:
 };
 
 //hit override
-bool PlaneMesh::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
+bool PlaneMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
 	
 	//Math is based off of the plane generation from "A minimal ray-tracer"
 	Vector tfmFacing = transform->applyTransform(facing);

@@ -59,10 +59,10 @@ public:
 		}
 	}
 
-	bool scatter(const ray& r_in, Vector& p, Vector& normal, float UV_x, float UV_y, Vector& attenuation, ray& scattered) const {
+	bool scatter(const Ray& r_in, Vector& p, Vector& normal, float UV_x, float UV_y, Vector& attenuation, Ray& scattered) const {
 
 		Vector target = p + normal + random_in_unit_sphere();
-		scattered = ray(p, target - p);
+		scattered = Ray(p, target - p);
 		
 		// if(UV_x > 0.5f && UV_x < 0.75f)
 		// 	std::cout << "wait";
