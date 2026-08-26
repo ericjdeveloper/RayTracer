@@ -98,18 +98,6 @@ inline Vector operator/(const Vector &v1, float t)
 	return Vector(v1.e[0]/ t, v1.e[1] / t, v1.e[2] / t, v1.e[3] / t);
 }
 
-inline float dot(const Vector &v1, const Vector &v2)
-{
-	return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2] + v1.e[3] * v2.e[3];
-}
-
-inline Vector cross(const Vector &v1, const Vector &v2)
-{
-	return Vector(  (v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1]),
-				(-(v1.e[0] * v2.e[2] - v1.e[2] * v2.e[0])),
-				  (v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]));
-}
-
 inline Vector& Vector::operator+=(const Vector &v) {
 	e[0] += v.e[0];
 	e[1] += v.e[1];
@@ -167,4 +155,26 @@ inline Vector& Vector::operator/=(const float t) {
 inline Vector unit_vector(Vector v)
 {
 	return v / v.length();
+}
+
+
+inline float dot(const Vector &v1, const Vector &v2)
+{
+	return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2] + v1.e[3] * v2.e[3];
+}
+
+inline Vector cross(const Vector &v1, const Vector &v2, const Vector &v3 = Vector(0,0,0,1))
+{
+	// const Vector v4 = Vector(0.5,0.5,0.5,0.5);
+
+	// const Vector a1 = v1;
+	// const Vector a2 = v2 - dot(a1, v2) * a1;
+	// const Vector a3 = v3 - dot(a1, v3) * a1 - dot(a2, v3) * a2;
+	// const Vector a4 = v4 - dot(a1, v4) * a1 - dot(a2, v4) * a2 - dot(a3, v4) * a3;
+
+	// return unit_vector(a3);
+
+	return Vector(  (v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1]),
+				(-(v1.e[0] * v2.e[2] - v1.e[2] * v2.e[0])),
+				  (v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]));
 }

@@ -2,17 +2,22 @@
 
 #include "..\Vector.h"
 #include "..\Item.h"
+#include "..\Materials\UVMap.h"
 
 class WorldSpace {
 
 public:
-	bool getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& color);
+	WorldSpace() {
+		envMat = new UVMap("gradient.ppm");
+	}
+	bool getColor(const Fan& f, Item **wrld_obs, int itm_cnt, int depth, Vector& color);
 	Vector getEnvironmentColor(Vector coord);
 private:
-	virtual bool getHit(const Ray& r, Item *wrld_obs, float min_dist, float max_dist, hit_record& rec) =0;
+	virtual bool getHit(const Fan& f, Item *wrld_obs, float min_dist, float max_dist, hit_record& rec) =0;
+	Material* envMat;
 };
 
-bool WorldSpace::getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth, Vector& col)
+bool WorldSpace::getColor(const Fan& f, Item **wrld_obs, int itm_cnt, int depth, Vector& col)
 {
 	if(depth == 0)	
 		return false;	
@@ -29,7 +34,7 @@ bool WorldSpace::getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth,
 	for (int i = 0; i < itm_cnt; i++) {
 
 		//if the item registers a hit
-		if (getHit(r, wrld_obs[i], 0.001, closest, rec)) {
+		if (getHit(f, wrld_obs[i], 0.001, closest, rec)) {
 
 			closest = rec.t;
 			closest_index = i;
@@ -49,17 +54,18 @@ bool WorldSpace::getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth,
 
 	//if the number of bounces is under the threshold
 	//and the scatter results in another hit
-	if (rec.mat_ptr->scatter(r, rec.p, rec.normal, rec.UV_x, rec.UV_y, attenuation, scattered)) {
+	if (rec.mat_ptr->scatter(rec.r, rec.p, rec.normal, rec.UV_x, rec.UV_y, attenuation, scattered)) {
 		//return the color of the scattered ray
 		int newDepth = depth - 1;
+		Fan scattered_fan = Fan(scattered.origin(), scattered.direction(), Vector(0,0,0,1),0);
 
 		Vector scattered_color = Vector(1,1,1);
-		if(!getColor(scattered, wrld_obs, itm_cnt, newDepth, scattered_color))
+		if(!getColor(scattered_fan, wrld_obs, itm_cnt, newDepth, scattered_color))
 		{
-			scattered_color = getEnvironmentColor(r.direction());
+			scattered_color = getEnvironmentColor(scattered_fan.direction());
 		}		
 
-		col = attenuation * scattered_color;		
+		col = attenuation * scattered_color;
 	}
 	else {
 		col = attenuation;
@@ -72,6 +78,16 @@ bool WorldSpace::getColor(const Ray& r, Item **wrld_obs, int itm_cnt, int depth,
 Vector WorldSpace::getEnvironmentColor(Vector coord)
 {	
 	Vector unit_direction = unit_vector(coord);
-	float t = 0.5*(unit_direction.y() + 1.0);		
-	return t * Vector(0.5f, 0.7f, 1.0f);	
+	
+	// Vector texture_coordinate = Vector(sin(unit_direction.x()), sin(unit_direction.y()), sin(unit_direction.z()));
+	// Vector norm = -coord;
+
+	float vert = 0.5 * (1 + unit_direction.y() );
+	Vector cloud_effect = Vector(0.5,0.3,0) * sin(unit_direction.z() * 10) * vert;		
+	return vert * vert * (Vector(0.5f, 0.7f, 1.0f) + cloud_effect);	
+
+	// Vector att;
+	// Ray scatt;
+	// envMat->scatter(Ray(Vector(0,0,0), coord), unit_direction, norm, coord.x(), coord.y(), att, scatt);
+	// return att;
 }

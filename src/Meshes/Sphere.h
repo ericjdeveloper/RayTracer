@@ -10,7 +10,7 @@ public:
 	SphereMesh(float d=1, Vector cen = Vector(0,0,0,0)) : center(cen), diameter(d) {};
 
 	//override for the hit call
-	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Fan& f, float tmin, float tmax, hit_record& rec) const;
 
 	Vector getUVCoordinate(Vector hitPoint) const;
 
@@ -20,53 +20,80 @@ public:
 };
 
 //override of hit function for the sphere
-bool SphereMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
+bool SphereMesh::hit(const Fan& f, float t_min, float t_max, hit_record& rec) const {
 
-	//the reasoning for the math is based on the "Ray Tracing In a Weekend" article,
-	//but the quick explanation is that the intersection of a line can be determined by
-	//the quadratic equation. 
-	
-	Vector globalCenter = transform->applyTransform(center, true);
+	// take the cross product of the fan
+	// find the intersection with cross going through hypersphere origin
+
+	Vector sphere_v = center - f.origin();
+	Vector perp = sphere_v - dot(sphere_v, f.direction()) * f.direction() - dot(sphere_v, f.Axis) * f.Axis;
+	float t = perp.length();
 	float radius = diameter / 2;
-	float scaledRadius = radius; // transform->scale.length();
+	if (t > radius)
+		return false;
 
-	Vector oc = r.origin() - globalCenter;
-	float a = dot(r.direction(), r.direction());
-	float b = dot(oc, r.direction());
-	float c = dot(oc, oc) - (scaledRadius * scaledRadius);
-	float discriminant = b * b -  a * c;
-
-	//If the descriminant has 2 roots its real, otherwise the 
-	//line does not exist
-	if (discriminant > 0)
-	{
-		//option a for the quadratic equation
-		float temp = (-b - sqrt(b*b - a * c)) / a;
-		if (temp < t_max && temp > t_min) {
-			rec.t = temp;
-			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - globalCenter) / scaledRadius;
-			Vector uv = getUVCoordinate(rec.p);
-			rec.UV_x = uv.x();
-			rec.UV_y = uv.y();
-			return true;
-		}
-
-		//option 2 for the quadratic equation
-		temp = (-b + sqrt(b*b - a * c)) / a;
-		if (temp < t_max && temp > t_min) {
-			rec.t = temp;
-			rec.p = r.point_at_parameter(rec.t);
-			rec.normal = (rec.p - globalCenter) / scaledRadius;
-			Vector uv = getUVCoordinate(rec.p);
-			rec.UV_x = uv.x();
-			rec.UV_y = uv.y();
-			return true;
-		}
-	}
 	
-	return false;
-}
+	float remaining_radius = sqrt(radius * radius - t * t);
+	
+	Vector origin_to_center = sphere_v - perp;
+	Vector norm = unit_vector(origin_to_center);
+	float d = dot(norm, f.direction());
+	if (d < 0)
+		return false;
+
+	float threshold = cos(f.Angle * DEG2RAD);
+	if (d > threshold)
+	{
+		rec.t = sqrt(origin_to_center.squared_length() - remaining_radius * remaining_radius);
+		rec.r = Ray(f.origin(), norm);
+		rec.p = f.origin() + rec.t * norm;
+		rec.normal = unit_vector(rec.p - center);
+		// Vector uv = getUVCoordinate(rec.p);
+		rec.UV_x = 0; //uv.x();
+		rec.UV_y = 0; //uv.y();
+		return true;
+	}
+
+	Vector edge = f.direction() * cos(f.Angle * DEG2RAD) + f.Axis * sin(f.Angle * DEG2RAD);
+	float dist = dot(origin_to_center, edge);
+	Vector p = dist * edge;
+	float mag_to_center = (origin_to_center - p).length();
+	if (mag_to_center > remaining_radius)
+		return false;
+
+	float radius_last_2 = remaining_radius * remaining_radius - mag_to_center* mag_to_center;
+	rec.t = dist - sqrt(radius_last_2);
+	rec.r = Ray(f.origin(), edge);
+	rec.p = rec.r.point_at_parameter(rec.t);
+	rec.normal = unit_vector(rec.p - center);
+	// Vector uv = getUVCoordinate(rec.p);
+	rec.UV_x = 0; //uv.x();
+	rec.UV_y = 0; //uv.y();
+	return true;
+
+	// if (d > dot(f.C, f.direction()))
+	// {
+	// 	return false;
+	// }
+	
+	// Vector axis_3 = cross(perp, f.direction());
+	// float d = dot(center_on_plane - f.origin(), f.direction());
+	// float v = d * dot(f.C - f.A, f.direction());
+	
+	// float center_a3 = dot(axis_3, f.origin() - center_on_plane);
+	// float bound_a3 = dot(axis_3, f.origin() - v * (f.C - f.A).make_unit_vector());
+	
+	// if (abs(center_a3) - remaining_radius > abs(bound_a3))
+	// 	return false;
+	
+	// float actual_a3 = max(abs(center_a3) - remaining_radius, abs(bound_a3));
+	// float actual_a2 = sqrt(remaining_radius * remaining_radius - actual_a3 * actual_a3);
+	
+	// Vector final_point = center_on_plane - axis_3 * actual_a3 - f.direction() * actual_a2;
+	// float tfinal = dot(final_point, f.A);
+		
+
+	}
 
 Vector SphereMesh::getUVCoordinate(Vector hitPoint) const
 {

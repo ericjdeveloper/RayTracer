@@ -16,19 +16,21 @@ using namespace std;
 
 #include "Materials\Material.h"
 #include "Materials\Normal.h"
+#include "Materials\Depth.h"
 #include "Materials\Lambertian.h"
 #include "Materials\Luminous.h"
 #include "Materials\Metal.h"
 #include "Materials\UVMap.h"
 
-#define SAMPLE_COUNT 5
+#define SAMPLE_COUNT 30
+#define MAX_BOUNCES 3
 
 //handles the various modules that have to do with
 //the environment, as well as handles the driving
 //of the start and loop
 class GameEngine {
 public:	
-	GameEngine(Renderer* rends, int r_cnt, int screen_width, int screen_height);
+	GameEngine(Renderer* rends, int r_cnt, ScreenData *screen);
 	//starts the game
 	void startGame();
 
@@ -55,14 +57,14 @@ private:
 };
 
 //constructor
-GameEngine::GameEngine(Renderer *rends, int r_cnt, int screen_width, int screen_height)
+GameEngine::GameEngine(Renderer *rends, int r_cnt, ScreenData* screen)
 {
 	r_count = r_cnt;
 	renderers = rends;
 	renderThread = nullptr;
 
 	//create a new window
-	output = new ScreenData(screen_width, screen_height);
+	output = screen;
 
 }
 
@@ -73,34 +75,36 @@ void GameEngine::startGame()
 	//create the world
 	world = new World();
 	world->cam->samples = SAMPLE_COUNT;
+	world->cam->max_bounces = MAX_BOUNCES;
 	//add a ground plane and a metal sphere
 	//just to test
 
 	world->cam->transform.position = Vector(0, 1, -3);	
-	world->cam->transform.rotation[0] = Vector(15,0,0);
+	world->cam->transform.rotation[1] = Vector(0,0,0);
 
 	//world->addObject(new Item(Vector(0, 0, 0), new PlaneMesh(Vector(0, 1, 0), 5, Vector(0, 0, -1)), new Lambertian(Vector(0.6, 0.8, 0.0))));
 	
 
-	Item* floor = new Item(Vector(0,-0.5,0), new PlaneMesh(Vector(0,1,0), 5, Vector(0,0, -1)), new Metal(Vector(0.1,0.1,0.1), 0.1f));
+	// new Metal(Vector(0.1,0.1,0.1), 0.1f)
+	Item* floor = new Item(Vector(0,-0.5,0), new PlaneMesh(Vector(0,1,0), 5, Vector(0,0, -1)), new Depth());
 	world->addObject(floor);
 
 	//world->addObject(new Item(Vector(1,0,1), new CubeMesh(), new Lambertian(Vector(0.6,0.3,0.8))));
 	
 	//Item* sphere = new Item(Vector(2, 0, 0), new SphereMesh(), new UVMap("sample.ppm")); //
-	Item* sphere = new Item(Vector(-2, 0, 0), new SphereMesh(), new Metal(Vector(0.3, 0.5, 0.1), 0.1f));
+	Item* sphere = new Item(Vector(0, 0, 0), new SphereMesh(1, Vector(0,0,0,0)), new Depth());
 	sphere->transform.scale = Vector(1,1,1);
 	world->addObject(sphere);
 	testItem = sphere;
 
-	Item* cube = new Item(Vector(-1,1,-1), new CubeMesh(0.75), new Lambertian(Vector(0.6,0.3,0.8)));
-	world->addObject(cube);
+	// Item* cube = new Item(Vector(10,0,0), new CubeMesh(1), new UVMap("gradient.ppm"));
+	// world->addObject(cube);
 	
-	Item* light = new Item(Vector(0, 1, 1), new PlaneMesh(Vector(0, 1, 0), 1, Vector(0,0,-1)), new Luminous(Vector(1, 1, 1)));
-	light->transform.rotation[0] = Vector(45, 0, 0);
-	world->addObject(light);
+	// Item* light = new Item(Vector(-1, 1, 1), new PlaneMesh(Vector(0, 1, 0), 1, Vector(0,0,-1)), new Luminous(Vector(1, 0.87, 0.13)));
+	// light->transform.rotation[0] = Vector(45, 30, 30);
+	// world->addObject(light);
 
-	// Item* cubemap = new Item(Vector(0, 0, 0), new CubeMesh(), new UVMap("sample.ppm"));
+	// Item* cubemap = new Item(Vector(3, 0, 3), new CubeMesh(), new UVMap("sample.ppm"));
 	// testItem = cubemap;
 	// cubemap->transform.scale = Vector(10,10,10);
 	// world->addObject(cubemap);
@@ -143,6 +147,9 @@ void GameEngine::gameLoop()
 
 	int fCount = 0;
 
+	float deltaTime = 0.01;
+	auto startFrameTimestamp = chrono::high_resolution_clock::now();
+
 	//main game loop
 	while (!exitFlag) {
 
@@ -165,21 +172,25 @@ void GameEngine::gameLoop()
 		//update the world
 		if(!isRendering)
 		{
+			auto endFrameTimestamp = chrono::high_resolution_clock::now();
+			std::chrono::duration<double> duration = endFrameTimestamp - startFrameTimestamp;
+			deltaTime = duration.count();
+			startFrameTimestamp = endFrameTimestamp;
 
-
-
+			output->fps = 1.0 / deltaTime;
 			//update the camera position
 
 			
 			//spinning camera
-			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0.5, cos(cameraAngle * DEG2RAD) * c_dist);
+			world->cam->transform.position = Vector(sin(cameraAngle * DEG2RAD) * c_dist, 0.75f, cos(cameraAngle * DEG2RAD) * c_dist);
+			// world->cam->viewport_plane = Vector(4.0, 2.0, 2.0, (sin(cameraAngle * DEG2RAD)));
 			world->cam->transform.rotation[0] = Vector(0, -cameraAngle, 0);
 			//world->cam->transform.rotation[1] = Vector(0,0,45);
 			//*/
 
 			//world->cam->transform.position = Vector(0.0,0.5,-1 - 0.02 * cameraAngle);
 			//world->cam->transform.rotation[1] = Vector(0,0,45);
-			//testItem->transform.position = Vector(0, 0, 0, sin(cameraAngle * DEG2RAD));
+			testItem->transform.position = Vector(0, sin(cameraAngle * DEG2RAD),0);
 
 			//testItem->transform.rotation[0] = Vector(cameraAngle,cameraAngle,0);			
 
@@ -193,16 +204,10 @@ void GameEngine::gameLoop()
 			//and create a new thread
 			isRendering = true;
 			renderThread = new thread(GameEngine::render, this); 
-			this_thread::sleep_for(33ms);
-/*
-			if(fCount == 360 / 5)
-			{
-				exitFlag = true;
-				break;
-			}
-//*/
+			this_thread::sleep_for(1000ms);
+
 			//spin the camera
-			cameraAngle = cameraAngle + 5;
+			cameraAngle += 10 * deltaTime;
 			fCount++;
 			//exitFlag = true;
 		}

@@ -10,7 +10,7 @@
 
 using namespace std;
 //number of threads-per-axis to use
-#define THREAD_COUNT 5
+#define CHUNK_SIZE 50
 
 
 //object to handle the Entities in the world
@@ -38,12 +38,10 @@ private:
 	int item_count = 0;
 
 	//function for obtaining the color of the given ray
-	Vector color(const Ray&, int depth);
+	Vector color(const Fan&, int depth);
 
 	//function for getting a random point within a unit sphere
 	Vector random_in_unit_sphere();
-
-
 
 	void renderSection(ScreenData* output, float x, float y, float w, float h);
 };
@@ -77,17 +75,15 @@ Vector World::random_in_unit_sphere() {
 }
 
 //gets the color value for a given ray
-Vector World::color(const Ray& r, int depth) {
+Vector World::color(const Fan& f, int depth) {
 
 	//create color variable
 	Vector col = Vector(0, 0, 0);
 
-	if (!ws->getColor(r, world_objects, item_count, cam->max_bounces, col))
+	if (!ws->getColor(f, world_objects, item_count, cam->max_bounces, col))
 	{			
-		col = ws->getEnvironmentColor(r.direction());	
+		col = ws->getEnvironmentColor(f.direction());	
 	}
-
-
 	return col;
 	
 }
@@ -99,25 +95,33 @@ void World::render(ScreenData* output)
 //or to create a series of other renderers
 #if THREAD_COUNT == 1
 		//render the entire screen at once
-		renderSection(output, 0,0,1, 1);
+		renderSection(output, 0,0,output->getWidth(), output->getHeight());
 #else
-		//get the percentage that each thread takes
-		float thread_chunk = 1.0f / THREAD_COUNT;
+		int chunk_count_x = ceil(output->getWidth() / CHUNK_SIZE);
+		int chunk_count_y = ceil(output->getHeight() / CHUNK_SIZE);
 		//create an array to store the threads
-		thread threads[THREAD_COUNT * THREAD_COUNT];
+		thread threads[chunk_count_x * chunk_count_y];
 
 		//loop through the chunks to assign the threads 
-		for (int i = 0; i < THREAD_COUNT; i++)
+		for (int i = 0; i < chunk_count_x; i++)
 		{
-			for (int j = 0; j < THREAD_COUNT; j++)
+			for (int j = 0; j < chunk_count_y; j++)
 			{
+				int start_x = i * CHUNK_SIZE;
+				int start_y = j * CHUNK_SIZE;
 				//create a thread and assign it the current chunk (with proper offset)
-				threads[(i * THREAD_COUNT) + j] = thread(&World::renderSection, this, output, i * thread_chunk, j  * thread_chunk, thread_chunk, thread_chunk);
+				threads[(i * chunk_count_y) + j] = 
+					thread(&World::renderSection, this, output,
+						start_x,
+						start_y,
+						min(output->getWidth() - start_x, CHUNK_SIZE),
+						min(output->getHeight() - start_y, CHUNK_SIZE)
+					);
 			}
 		}
 
 		//loop through all the threads and wait for them to complete
-		for (int i = 0; i < THREAD_COUNT * THREAD_COUNT; i++)
+		for (int i = 0; i < chunk_count_x * chunk_count_y; i++)
 		{
 			threads[i].join();
 		}
@@ -127,15 +131,15 @@ void World::render(ScreenData* output)
 void World::renderSection(ScreenData* output, float x, float y, float w, float h)
 {
 	hash<int> sample_hasher;
-	//get the number of pixels to output
+
 	int width = output->getWidth();
 	int height = output->getHeight();
 
 	//loop through the width
-	for (int j = x * width; j < (x + w) * width; j++)
+	for (int j = 0; j < w; j++)
 	{
 		//loop through the height
-		for (int i = y * height; i < (y + h) * height; i++)
+		for (int i = 0; i < h; i++)
 		{
 			//set a base color
 			Vector col(0, 0, 0);
@@ -147,23 +151,20 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 				//get a random x and y value within the pixel
 				float randx = ((double)rand() / (RAND_MAX + 1));
 				float randy = ((double)rand() / (RAND_MAX + 1));
-				
 
 				//determine the point the ray should go through
-				float u = float(j + randx) / float(width);
-				float v = float(i + randy) / float(height);
+				float u = float(x + j + randx) / width;
+				float v = float(y + i + randy) / height;
 
 				//gets a ray from the camera starting
 				//at the cameras position and going through point u,v
-				Ray r = cam->get_ray(u, v);
+				Fan f = cam->get_fan(u, v);
 				//get the color value for the given ray
 
-				col += color(r, 0);
-
-				
+				col += color(f, 0);
 
 			}
-			//divide the color by the number of samples
+			// //divide the color by the number of samples
 			col /= float(cam->samples);
 			
 			//gamma adjustment
@@ -175,8 +176,7 @@ void World::renderSection(ScreenData* output, float x, float y, float w, float h
 			Uint8 ib = Uint8(255.99 * col[2]);
 
 			//set the given pixel value of the output
-			
-			output->setPixel(j, i, ir, ig, ib);
+			output->setPixel(x + j, y + i, ir, ig, ib);
 
 		}
 

@@ -7,7 +7,7 @@
 class SDLWindowRenderer : public Renderer{
 public:
 	//constructor that sets the width, height, and scale of the window
-	SDLWindowRenderer(int w, int h);
+	SDLWindowRenderer(ScreenData* screen, int scale);
 	//function for rendering the window
 	void renderWindow(ScreenData* sd);
 
@@ -19,56 +19,41 @@ private:
 	//the SDL side renderer
 	SDL_Renderer *renderer;
 
+	SDL_Texture *renderTexture;
+	int pitch;
 };
 
 //constructor that initializes the window
-SDLWindowRenderer::SDLWindowRenderer(int w, int h)
+SDLWindowRenderer::SDLWindowRenderer(ScreenData* screen, int scale)
 {
 	//set the width, height, and scale
-	width = w;
-	height = h;
-
+	height = screen->getHeight();
+	width = screen->getWidth();
+	
+	pitch = screen->getWidth() * 3;
 	//SDL window creation
 	SDL_Init(SDL_INIT_VIDEO);
-	SDL_CreateWindowAndRenderer("Raytracer", w, h, 0, &window, &renderer);
+	SDL_CreateWindowAndRenderer("Raytracer", width * scale, height * scale, 0, &window, &renderer);
+	SDL_SetRenderLogicalPresentation(renderer, width,height, SDL_RendererLogicalPresentation::SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
+	renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_TARGET, width, height);
+	SDL_SetTextureScaleMode(renderTexture, SDL_SCALEMODE_NEAREST);
 }
 
 //renders the pixels from the array to the window
 void SDLWindowRenderer::renderWindow(ScreenData* sd)
 {
 	
-	float scale_x = (float)sd->getWidth() / width;
-	float scale_y = (float)sd->getHeight() / height;
+	SDL_UpdateTexture(renderTexture, NULL, (void **)sd->getPixels(), sd->getWidth() * 3);
+	SDL_RenderTextureRotated(renderer, renderTexture, NULL, NULL, 0, NULL,SDL_FlipMode::SDL_FLIP_VERTICAL);
 
-	
-
-	//loop through the width
-	for (int x =0; x < width; x++)
-	{
-		//loop through the height
-		for (int y=0; y < height; y++) {
-
-			int screen_x = floor(x * scale_x);
-			int screen_y = floor(y * scale_y);
-
-
-			//get the rgb values from the array 
-			Uint8 r;
-			Uint8 g;
-			Uint8 b;
-
-			sd->getPixel(screen_x, screen_y, r, g, b);
-			//set the render color
-			SDL_SetRenderDrawColor(renderer, r, g, b, 1);
-
-
-			//draw the current pixel with the color described
-			SDL_RenderPoint(renderer, x, height-y);
-
-		}
-	}
+	char fps[4];
+	snprintf(fps, 4, "%f", sd->fps);
+	SDL_SetRenderDrawColor(renderer, 0, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderDebugText(renderer, 0, 0, fps);
 
 	//render the view to the screen
 	SDL_RenderPresent(renderer);
+
+
 }

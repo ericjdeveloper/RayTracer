@@ -13,16 +13,19 @@ public:
 		m->setTransform(&transform);
 	};
 
-	bool hit(const Ray& r, float t_min, float t_max, hit_record& rec);
+	bool hit(const Fan& f, float t_min, float t_max, hit_record& rec);
 
 	Material *material;
 	Mesh *mesh;
 };
 
-bool Item::hit(const Ray& r, float t_min, float t_max, hit_record& rec)
+bool Item::hit(const Fan& f, float t_min, float t_max, hit_record& rec)
 {
-	
-	if(mesh->hit(r, t_min, t_max, rec))
+	// Vector origin = transform.applyTransform(f.origin(), true);
+	// Vector direction = transform.applyTransform(f.direction());
+	// Vector axis = transform.applyTransform(Vector(0,0,0,1));
+	// Fan f_new = Fan(Ray(origin, direction), axis, 20);
+	if(mesh->hit(f, t_min, t_max, rec))
 	{
 		rec.mat_ptr = material;
 		return true;

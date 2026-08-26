@@ -10,7 +10,7 @@ public:
 	PlaneMesh(Vector f=Vector(0,0,-1), float w=1, Vector u = Vector(0,1,0), Vector cen = Vector(0, 0, 0)) : center(cen), width(w), facing(f), up(u){};
 
 	//override
-	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Fan& f, float tmin, float tmax, hit_record& rec) const;
 	Vector getUVCoordinate(Vector hitPoint) const;
 
 	Vector center;
@@ -20,18 +20,19 @@ public:
 };
 
 //hit override
-bool PlaneMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
+bool PlaneMesh::hit(const Fan& f, float t_min, float t_max, hit_record& rec) const {
 	
 	//Math is based off of the plane generation from "A minimal ray-tracer"
 	Vector tfmFacing = transform->applyTransform(facing);
 	
-	float denom = dot(-r.direction(), tfmFacing);
+	float denom = dot(-f.direction(), tfmFacing);
+	Ray r = Ray(f.origin(), f.direction());
 
 	if (abs(denom) > 1e-6) {
 
 		Vector globalCenter = transform->applyTransform(center, true);
 
-		Vector p0l0 = r.origin() - globalCenter;
+		Vector p0l0 = f.origin() - globalCenter;
 		float temp = dot(p0l0, tfmFacing) / denom;
 
 		
@@ -66,6 +67,7 @@ bool PlaneMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) con
 				rec.normal = unit_vector(tfmFacing);
 				rec.t = temp;
 				rec.p = p;
+				rec.r = r;
 				Vector uv_coords = getUVCoordinate(p);
 				rec.UV_x = uv_coords.x();
 				rec.UV_y = uv_coords.y();

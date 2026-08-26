@@ -10,8 +10,8 @@ class Transform {
 public:
 	Vector position;
 	Vector rotation[2] = {
-		Vector(0,0,0),
-		Vector(0,0,0) // xy, xz, yz
+		Vector(0,0,0), // xy, xz, yz
+		Vector(0,0,0) // wx, wy, wz
 		};
 	Vector scale = Vector(1,1,1,1);
 

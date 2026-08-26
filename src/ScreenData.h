@@ -8,11 +8,15 @@ public:
 	void setPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b);
 	//function for getting the pixel (x,y) into (r,g,b)
 	void getPixel(int x, int y, Uint8& r, Uint8& g, Uint8& b);
+	
+	Uint8* getPixels() {return pixels;}
 
 	//gets the pixel width of the window
 	int getWidth() { return width; }
 	//gets the pixel height of the window
 	int getHeight() { return height; }
+
+	float fps;
 private:
 
 	int width, height;
@@ -24,7 +28,7 @@ ScreenData::ScreenData(int w, int h)
 {
 	width = w;
 	height = h;
-
+	
 	pixels = new Uint8[width * height * 3];
 }
 

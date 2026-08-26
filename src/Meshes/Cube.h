@@ -15,19 +15,20 @@ public:
 		transform = tfm;
 	};
 
-	bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
+	bool hit(const Fan& f, float tmin, float tmax, hit_record& rec) const;
 	Vector getUVCoordinate(Vector hitPoint) const;
 	Vector center;
 	float size;
 };
 
 //cube override
-bool CubeMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const {
+bool CubeMesh::hit(const Fan& f, float t_min, float t_max, hit_record& rec) const {
 
 	//just loop through all the faces
 	//and calculate
-	Vector origin = r.origin(); //transform->applyTransform(r.origin(), true);
-	Vector local_ray = r.direction();//transform->applyTransform(r.direction());
+	Vector origin = f.origin(); //transform->applyTransform(r.origin(), true);
+	Vector forward = f.direction();//transform->applyTransform(r.direction());
+	Ray r = Ray(origin, forward);
 
 	hit_record h = hit_record();
 	h.t = -1;
@@ -37,14 +38,14 @@ bool CubeMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) cons
 	
 	float hits[6];
 
-	hits[0] = local_ray.y()? (center.y() + bound - origin.y()) / local_ray.y() : -1;
-	hits[1] = local_ray.y()? (center.y() - bound - origin.y()) / local_ray.y() : -1;
+	hits[0] = forward.y()? (center.y() + bound - origin.y()) / forward.y() : -1;
+	hits[1] = forward.y()? (center.y() - bound - origin.y()) / forward.y() : -1;
 	
-	hits[2] = local_ray.x()? (center.x() + bound - origin.x()) / local_ray.x() : -1;
-	hits[3] = local_ray.x()? (center.x() - bound - origin.x()) / local_ray.x() : -1;
+	hits[2] = forward.x()? (center.x() + bound - origin.x()) / forward.x() : -1;
+	hits[3] = forward.x()? (center.x() - bound - origin.x()) / forward.x() : -1;
 	
-	hits[4] = local_ray.z()? (center.z() + bound - origin.z()) / local_ray.z() : -1;
-	hits[5] = local_ray.z()? (center.z() - bound - origin.z()) / local_ray.z() : -1;
+	hits[4] = forward.z()? (center.z() + bound - origin.z()) / forward.z() : -1;
+	hits[5] = forward.z()? (center.z() - bound - origin.z()) / forward.z() : -1;
 
 	Vector normals[8] = {
 		Vector(0,1,0),
@@ -86,10 +87,15 @@ bool CubeMesh::hit(const Ray& r, float t_min, float t_max, hit_record& rec) cons
 	rec.t = h.t;
 	rec.p = h.p;
 	rec.normal = h.normal;
+
+	//fancy but probably slow way to get other two axes
+	//(can't just use cross as we need to have a proper "up" vector)
+	int axis_up = abs(rec.normal.x() + rec.normal.z()) ? 1 : 2;
+	int axis_left = abs(rec.normal.y() + rec.normal.z()) ? 0 : 2;
 	
 	// uv calculation
-	float plane_x = rec.p.x();
-	float plane_y = rec.p.y();
+	float plane_x = (rec.p[axis_up]);
+	float plane_y = (rec.p[axis_left]);
 	rec.UV_x = (plane_x / size) + 0.5f;
 	rec.UV_y = (plane_y / size) + 0.5f;
 	return true;

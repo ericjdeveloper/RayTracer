@@ -16,11 +16,11 @@
 //creates and launges the game engine
 int main(int argc, char* argv[])
 {
-	int width = 800;
-	int height = 400;
-	int scale = 2;
+	int width = 400;
+	int height = 200;
+	int scale = 4;
 
-
+	ScreenData* screen = new ScreenData(width, height);
 
 	Renderer *rend = nullptr;
 	if (argc >= 2)
@@ -44,18 +44,18 @@ int main(int argc, char* argv[])
 				rend = new PPMRenderer(width * scale, height * scale);
 				break;
 			default:
-				rend = new SDLWindowRenderer(width * scale, height * scale);
+				rend = new SDLWindowRenderer(screen, scale);
 		}
 	}
 	else
 	{
-		rend = new SDLWindowRenderer(width * scale, height * scale);
+		rend = new SDLWindowRenderer(screen, scale);
 	}
 
 
 
 	//initialize the game engine
-	GameEngine *ge = new GameEngine(rend, 1, width, height);
+	GameEngine *ge = new GameEngine(rend, 1, screen);
 
 	//start it
 	ge->startGame();

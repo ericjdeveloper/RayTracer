@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Ray.h"
+#include "Fan.h"
 
 //Camera handles in-world aspect of the rendering
 class Camera : public Entity {
@@ -11,8 +12,6 @@ public:
 	//and max_bounces
 	Camera(Vector pos): Entity(pos) {
 		viewport_plane = Vector(4.0, 2.0, 2.0);
-		samples = 50;
-		max_bounces = 3;
 	}
 	
 	//returns the ray at a given point on the viewport plane
@@ -27,11 +26,16 @@ public:
 				);
 	}
 
+	Fan get_fan(float u, float v) {
+		Ray r = get_ray(u,v);
+		return Fan(r.origin(), r.direction(), Vector(0,0,0,1), 30);
+	}
+
 	//the plane width, height, and distance from origin
 	//that represents the 2d area the that is rendered
 	Vector viewport_plane;
 	//the number of samples to render from this camera
-	int samples;
+	int samples=1;
 	//the maximum number of light bounces this camera should render
-	int max_bounces;
+	int max_bounces=1;
 };

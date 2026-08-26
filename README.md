@@ -12,7 +12,7 @@ Currently, this renderer supports
     
 
 ### Future Updates:
-The intention for this raytracer is to try and create an engine that supports liminal space. This is not an easy task, and it might be a long while before that is
+The intention for this raytracer is to try and create an engine that supports non-euclidean space. This is not an easy task, and it might be a long while before that is
 completely implemented. However, all design choices made now will be made with this future behaviour in mind.
 
 ## Installation:
